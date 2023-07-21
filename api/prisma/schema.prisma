@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(20)
+  email      String       @unique @db.VarChar(30)
+  password   String       @db.VarChar(20)
+  Orders     Order[]
+  Enrollment Enrollment[]
+}
+
+model Artisan {
+  id       Int       @id @default(autoincrement())
+  name     String    @db.VarChar(20)
+  password String    @db.VarChar(20)
+  email    String    @unique @db.VarChar(30)
+  desc     String    @db.LongText
+  Product  Product[]
+  Course   Course[]
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(20)
+  Product Product[]
+}
+
+model Product {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(20)
+  price       Float
+  desc        String      @db.LongText
+  product_img String      @db.MediumText
+  artisanId   Int
+  artisan     Artisan     @relation(fields: [artisanId], references: [id])
+  categoryId  Int
+  category    Category    @relation(fields: [categoryId], references: [id])
+  OrderItems  OrderItem[]
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  date       DateTime    @db.Date
+  status     STATUS
+  client     User        @relation(fields: [clientId], references: [id])
+  clientId   Int
+  OrderItems OrderItem[]
+  Payment    Payment?
+}
+
+model OrderItem {
+  id          Int     @id @default(autoincrement())
+  quantity    Int
+  total_price Float
+  productId   Int
+  orderId     Int
+  product     Product @relation(fields: [productId], references: [id])
+  order       Order   @relation(fields: [orderId], references: [id])
+}
+
+model Course {
+  id         Int          @id @default(autoincrement())
+  title      String       @db.VarChar(40)
+  desc       String       @db.LongText
+  artisanId  Int
+  artisan    Artisan      @relation(fields: [artisanId], references: [id])
+  Enrollment Enrollment[]
+}
+
+model Enrollment {
+  id       Int      @id @default(autoincrement())
+  date     DateTime
+  courseId Int
+  userId   Int
+  course   Course   @relation(fields: [courseId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model Payment {
+  id      Int      @id @default(autoincrement())
+  date    DateTime
+  amount  Float
+  orderId Int      @unique
+  order   Order    @relation(fields: [orderId], references: [id])
+}
+
+enum STATUS {
+  PENDING // La commande a été passée mais n'a pas encore été traitée.
+  PROCESSING // La commande est en cours de préparation et de traitement
+  SHIPPED // La commande a été expédiée et est en transit vers le client
+  DELIVERED // La commande a été livrée avec succès au client
+}
