@@ -12,16 +12,24 @@
   font-weight: bold;
 }
 
-.signIn { 
+.signIn {
   font-size: 1.1rem;
-  font-family: 'Quicksand';
-  color : rgb(52 32 26 / var(--tw-text-opacity));
+  font-family: "Quicksand";
+  color: rgb(52 32 26 / var(--tw-text-opacity));
   transition: 0.3s;
 }
 
-.signIn:hover { 
+.signIn:hover {
   --tw-text-opacity: 1;
   color: rgb(239 222 161 / var(--tw-text-opacity));
+}
+
+.error_message {
+  color: red;
+  font-size: 11px;
+  margin: 0px;
+  padding: 0px;
+  padding-left: 3px;
 }
 
 span {

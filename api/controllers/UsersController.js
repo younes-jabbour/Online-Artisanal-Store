@@ -2,26 +2,28 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 
+
 require("dotenv").config();
 
 const bcrypt = require("bcrypt");
 
-// const posts = [ // for testing purpose
-//   {
-//     name: "younes",
-//     title: "Dragon ball",
-//   },
-//   {
-//     name: "appah",
-//     title: "Gumball",
-//   },
-// ];
+const posts = [ // for testing purpose
+  {
+    name: "younes",
+    title: "Dragon ball",
+  },
+  {
+    name: "appah",
+    title: "Gumball",
+  },
+];
 
-// const getPost =
-//   (authenticateToken,
-//   async (req, res) => {
-//     res.json(posts);
-//   });
+
+const getPost = async (req,res) => { 
+  result = req.auth.id ;
+
+  return res.json({success : "you make it"});
+}
 
 // function that create a new user
 
@@ -126,4 +128,4 @@ Token = (id) => {
 };
 
 
-module.exports = { CreateUser, CreateArtisan, Login, getPost };
+module.exports = { CreateUser, CreateArtisan, Login , getPost };
