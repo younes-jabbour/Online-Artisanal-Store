@@ -32,11 +32,6 @@
   padding-left: 3px;
 }
 
-span {
-  font-family: "Rasputin", sans-serif;
-  font-size: 2.5rem;
-  word-spacing: normal;
-}
 /* The typing effect */
 @keyframes typing {
   from {

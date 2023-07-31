@@ -9,7 +9,6 @@ import {
   Typography,
   Radio,
 } from "@material-tailwind/react";
-
 import { Link } from "react-router-dom";
 
 export default function Register() {
@@ -118,7 +117,10 @@ export default function Register() {
             shadow={false}
             className=" bg-white max-w-fit p-5 pb-0 bottom-2 shadow-BrownDark "
           >
-            <Typography variant="h4" className="text-center mb-2 text-BrownDark">
+            <Typography
+              variant="h4"
+              className="text-center mb-2 text-BrownDark"
+            >
               Sign Up
             </Typography>
             <form className="mt-2 mb-2 w-80 max-w-screen-lg sm:w-96">
@@ -130,7 +132,9 @@ export default function Register() {
                   onChange={handleChange}
                   color="brown"
                 />
-                {errors.name && <div className="error_message">{errors.name}</div>}
+                {errors.name && (
+                  <div className="error_message">{errors.name}</div>
+                )}
                 <Input
                   size="lg"
                   label="Email"
@@ -138,7 +142,9 @@ export default function Register() {
                   onChange={handleChange}
                   color="brown"
                 />
-                {errors.email && <div className="error_message">{errors.email}</div>}
+                {errors.email && (
+                  <div className="error_message">{errors.email}</div>
+                )}
                 <Input
                   type="password"
                   size="lg"
@@ -147,7 +153,9 @@ export default function Register() {
                   onChange={handleChange}
                   color="brown"
                 />
-                {errors.password && <div className="error_message">{errors.password}</div>}
+                {errors.password && (
+                  <div className="error_message">{errors.password}</div>
+                )}
               </div>
 
               {/* radio buttoms */}
@@ -213,7 +221,10 @@ export default function Register() {
           className={` text-white  flex flex-col items-center justify-center h-full bg-black opacity-75 `}
         >
           <div className=" text-3xl">
-            Welcome to <span className=" text-BrownLight">7irafi</span>
+            Welcome to{" "}
+            <span className=" font-Rasputin text-5xl text-BrownLight">
+              7irafi
+            </span>
           </div>
           <div className="typing-demo ">
             where you can discover the world of traditional craftsmanship

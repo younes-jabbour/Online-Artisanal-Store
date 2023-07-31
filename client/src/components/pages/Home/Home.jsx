@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-
+import react from "react";
+import Carousel from "../Layout/Carousel";
+import Footer from "../Layout/Footer";
 
 function Home() {
   return (
     <>
-
-      <div>Home page</div>
+      <Carousel />
+      <Footer/>
     </>
   );
 }

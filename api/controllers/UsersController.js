@@ -1,29 +1,17 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const jwt = require("jsonwebtoken");
 
 
 require("dotenv").config();
 
 const bcrypt = require("bcrypt");
 
-const posts = [ // for testing purpose
-  {
-    name: "younes",
-    title: "Dragon ball",
-  },
-  {
-    name: "appah",
-    title: "Gumball",
-  },
-];
 
-
-const getPost = async (req,res) => { 
-  result = req.auth.id ;
-
-  return res.json({success : "you make it"});
-}
+// const getPost = async (req,res) => { 
+//   result = req.auth.id ;
+//   res = result ;
+//   return res ;
+// }
 
 // function that create a new user
 
@@ -46,7 +34,6 @@ const CreateUser = async (req, res) => {
         password: hashpassword,
       },
     });
-
     res.status(201).json(user);
   } catch (error) {
     console.error(error);
@@ -84,48 +71,7 @@ const CreateArtisan = async (req, res) => {
 
 // function that log new users (visitor or artisan ) and assign to each one a unique JWT Token.
 
-const Login = async (req, res) => {
-  const { email, password, type } = req.body;
-  if (type === "visitor") {
-    const user = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    console.log(email);
-    if (!user) return res.status(404).json({ error: "Email not found" });
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword)
-      return res.status(400).json({ error: "invalid credentials" });
-    res.status(201).json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      token: Token(user.id),
-    });
-  } else if (type === "artisan") {
-    const artisan = await prisma.artisan.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    if (!artisan) return res.status(404).json({ error: "Email not found" });
-    const validPassword = await bcrypt.compare(password, artisan.password);
-    if (!validPassword) {
-      return res.status(400).json({ error: "invalid credentials" });
-    }
-    res.status(201).json({
-      id: artisan.id,
-      name: artisan.name,
-      email: artisan.email,
-      token: Token(artisan.id),
-    });
-  }
-};
-
-Token = (id) => {
-  return jwt.sign(id, process.env.ACCESS_SECRET_TOKEN); // access token
-};
 
 
-module.exports = { CreateUser, CreateArtisan, Login , getPost };
+
+module.exports = { CreateUser, CreateArtisan };

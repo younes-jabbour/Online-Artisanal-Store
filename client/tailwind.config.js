@@ -9,6 +9,10 @@ module.exports = withMT({
         BrownDark : '#34201A',
         BrownLight : '#EFDEA1',
       },
+      fontFamily: {
+        Rasputin:  ["Rasputin"],
+        Quicksand: ["Quicksand"],
+      },
     },
   },
   plugins: [require('prettier-plugin-tailwindcss')],

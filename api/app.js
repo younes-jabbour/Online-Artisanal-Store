@@ -6,9 +6,10 @@ var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var authRouter = require("./routes/auth");
 require("dotenv").config();
 
-var { expressjwt: jwt } = require("express-jwt");
+// var { expressjwt: jwt } = require("express-jwt");
 
 var app = express();
 
@@ -20,17 +21,17 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use(
-  jwt({
-    secret: process.env.ACCESS_SECRET_TOKEN,
-    algorithms: ["HS256"],
-  }).unless({
-    path: [
-      "/users/login",
-      "/users/register",
-    ],
-  })
-);
+// app.use(
+//   jwt({
+//     secret: process.env.ACCESS_SECRET_TOKEN,
+//     algorithms: ["HS256"],
+//   }).unless({
+//     path: [
+//       "/auth/login",
+//       "/users/register",
+//     ],
+//   })
+// );
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -42,8 +43,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/",indexRouter);
+app.use("/users",usersRouter);
+app.use("/auth",authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

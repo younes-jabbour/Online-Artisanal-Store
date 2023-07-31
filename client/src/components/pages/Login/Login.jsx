@@ -30,10 +30,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("users/login", inputs).then((response) => {
-        const token = response.data.token;
-        localStorage.setItem("jwtToken", token);
-        console.log("Token is in the localStorage");
+      await axios.post("http://localhost:5000/auth/login", inputs).then((response) => {
+        localStorage.setItem("AccessToken", response.data.AccessToken);
+        localStorage.setItem("RefreshToken", response.data.RefreshToken);
+        console.log("Tokens are in the localStorage");
       });
       axios.defaults.withCredentials = true;
     } catch (err) {
@@ -41,7 +41,8 @@ function Login() {
         setErrorMessage("Email not found!");
       else if (err.response && err.response.status === 400)
         setErrorMessage("wrong email or password !");
-      else console.log(err);
+      else if (err.response && err.response.status === 401 )  
+          console.log("Forbidden");
     }
   };
 
