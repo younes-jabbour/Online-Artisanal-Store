@@ -1,38 +1,62 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-// this is the secret key for the acess Token.
-secretKey = process.env.ACCESS_SECRET_TOKEN;
+// This is the secret key for the access Token.
+const secretKey = process.env.ACCESS_SECRET_TOKEN;
 
-verifyJwtToken = (req, res, next) => {
+const verifyJwtToken = (req, res, next) => {
   const authHeader = req.header("Authorization");
-
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({ message: "Access denied. No token provided." });
+    return res.status(401).json({ error: "Access denied. Token is missing." });
   }
 
-  // Split the header value by space to get the token
   const [scheme, token] = authHeader.split(" ");
 
-  // Check if the token has the correct Bearer scheme
   if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ message: "Invalid token format." });
+    return res.status(401).json({ error: "Invalid token format." });
   }
 
   try {
-    // Verify the JWT token
     const decoded = jwt.verify(token, secretKey);
-
-    // Add the decoded token data to the request object for further use in the route handlers
     req.user = decoded;
-
-    // Continue to the next middleware or route handler
     next();
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token." });
+    if (err.name === "TokenExpiredError") {
+      return res.status(403).json({ error: "Token has expired." });
+    }
+    return res.status(403).json({ error: "Invalid token." });
   }
 };
 
 module.exports = verifyJwtToken;
+
+// const jwt = require("jsonwebtoken");
+// require("dotenv").config();
+
+// // this is the secret key for the acess Token.
+// secretKey = process.env.ACCESS_SECRET_TOKEN;
+
+// verifyJwtToken = (req, res, next) => {
+//   const authHeader = req.header("Authorization");
+
+//   if (!authHeader) {
+//     return res.status(401).json({ error: "Access denied. No token provided." });
+//   }
+
+//   const [scheme, token] = authHeader.split(" ");
+
+//   if (scheme !== "Bearer" || !token) {
+//     return res.sendStatus(401).json({ error: "Invalid token format." });
+//   }
+//   try {
+//     const decoded = jwt.verify(token, secretKey);
+
+//     req.user = decoded;
+
+//     next();
+//   } catch (err) {
+//     return res.status(403).json({ error: "Invalid token." });
+//   }
+// };
+
+// module.exports = verifyJwtToken;

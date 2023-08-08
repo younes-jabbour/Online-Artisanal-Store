@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useUserContext } from "../../../context/UserContext";
 import {
   Navbar,
   Collapse,
@@ -12,9 +13,8 @@ import {
   MenuItem,
 } from "@material-tailwind/react";
 import DrawerCpt from "./DrawerCpt";
-import Logout from "../logout/Logout";
+// import Logout from "../auth/logout/Logout";
 import { Link } from "react-router-dom";
-
 
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { ShoppingBagIcon } from "@heroicons/react/24/solid";
@@ -22,15 +22,24 @@ import { HomeIcon } from "@heroicons/react/24/solid";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
 
 function Header({ count }) {
+  const cart = useSelector((state) => state.cart); // hook from redux
+  const quantity = useSelector((state) => state.cart.quantity);
+  // console.log(quantity);
   const [openNav, setOpenNav] = React.useState(false);
   const [Visible, Setvisible] = useState(false);
 
+  const { userInfo, logout } = useUserContext();
+  // console.log(userInfo);
+  // const [userData, SetuserData] = useState({});
+
   useEffect(() => {
-    if (count === 0) return Setvisible(true);
+    if (quantity === 0) return Setvisible(true);
     else return Setvisible(false);
-  }, [count]);
+  }, [quantity, Visible]);
+  // console.log(Visible);
 
   // Drawer states
   const [open, setOpen] = React.useState(false);
@@ -51,76 +60,73 @@ function Header({ count }) {
 
   const buttoms = (
     <div className="flex gap-1">
-      <Button
-        className="shadow-none hover:shadow-none "
-        variant="gradient"
-        size="sm"
-      >
-        <span className=""> Register</span>
-      </Button>
-      <Button className="flex items-center gap-2" variant="text" size="sm">
-        Login
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="h-5 w-5"
+      <Link to="/register">
+        <Button
+          className="shadow-none hover:shadow-none "
+          variant="gradient"
+          size="sm"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-          />
-        </svg>
-      </Button>
+          <span className=""> Register</span>
+        </Button>
+      </Link>
+      <Link to="/login">
+        <Button className="flex items-center gap-2" variant="text" size="sm">
+          Login
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-5 w-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+            />
+          </svg>
+        </Button>
+      </Link>
     </div>
   );
 
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-3 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-16">
-      <Typography
-        as="li"
-        color="blue-gray"
-        className="p-1 flex gap-1 items-center  lg:text-base font-bold hover:text-blue-700"
-      >
-        <HomeIcon className="h-4 w-4 to-black" />
-        <a href="http://home.com" className="flex items-center ">
-          home
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        color="blue-gray"
-        className="p-1 flex items-center gap-1 font-bold lg:text-base"
-      >
-        <ShoppingBagIcon className="w-4 h-4" />
-        <a
-          href="http://home.com"
-          className="flex items-center hover:text-blue-700"
+      <Link to="/">
+        <Typography
+          as="li"
+          color="blue-gray"
+          className="p-1 flex gap-1 items-center cursor-pointer lg:text-base font-bold hover:text-blue-700"
         >
+          <HomeIcon className="h-4 w-4 to-black" />
+          home
+        </Typography>
+      </Link>
+      <Link to="/products">
+        <Typography
+          as="li"
+          color="blue-gray"
+          className="p-1 flex items-center cursor-pointer gap-1 font-bold lg:text-base  hover:text-blue-700"
+        >
+          <ShoppingBagIcon className="w-4 h-4" />
           product
-        </a>
-      </Typography>
+        </Typography>
+      </Link>
       <Typography
         as="li"
         color="blue-gray"
-        className="p-1 flex gap-1 items-center font-bold lg:text-"
+        className="p-1 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
       >
         <BookOpenIcon className="w-4 h-4" />
-        <a
-          href="http://home.com"
-          className="flex items-center hover:text-blue-700"
-        >
-          learn
-        </a>
+        learn
       </Typography>
     </ul>
   );
   const shoppingCard = (
     <div onClick={openDrawer} className="mr-2">
-      <Badge content={count} invisible={Visible} withBorder>
+      {/* <Badge content={count} invisible={Visible} withBorder> */}
+      <Badge content={quantity} invisible={Visible} withBorder>
         <IconButton variant="text">
           <ShoppingCartIcon className="h-7 w-7 to-black" />
         </IconButton>
@@ -138,12 +144,17 @@ function Header({ count }) {
       <MenuList>
         <MenuItem className=" flex items-center gap-1">
           <UserCircleIcon className="h-5 w-5" />
-          <span>My Profile</span>
+          <Link to="/profile">
+            <span>My Profile</span>
+          </Link>
         </MenuItem>
-        <MenuItem onClick={Logout} className=" text-red-800 flex items-center gap-1">
+        <MenuItem
+          onClick={logout}
+          className=" text-red-800 flex items-center gap-1"
+        >
           <PowerIcon className="h-4 w-4" />
-          <Link to="/Login" preventScrollReset={true}>
-          <span>Log out</span>
+          <Link to="/">
+            <span>Log out</span>
           </Link>
         </MenuItem>
       </MenuList>
@@ -154,18 +165,23 @@ function Header({ count }) {
     <>
       <Navbar className="sticky top-0 z-10 py-4 max-w-full rounded-none  px-4 lg:px-8 lg:py-2">
         <div className="container mx-auto flex items-center justify-between text-blue-gray-900">
-          <Typography
-            as="a"
-            href="#"
-            className="mr-4 cursor-pointer text-4xl text-brown-700 py-1.5 font-Rasputin"
-          >
-            7irafi.
-          </Typography>
+          <Link to="/">
+            <Typography
+              as="a"
+              className="mr-4 cursor-pointer text-4xl text-brown-700 py-1.5 font-Rasputin"
+            >
+              7irafi.
+            </Typography>
+          </Link>
           <div className="hidden lg:block">{navList}</div>
           <div className="hidden lg:flex gap-2">
-            {UserMenu}
+            <div className={userInfo.IsConnected ? "block" : "hidden"}>
+              {UserMenu}
+            </div>
             {shoppingCard}
-            {buttoms}
+            <div className={userInfo.IsConnected ? "hidden" : "block"}>
+              {buttoms}
+            </div>
           </div>
 
           <IconButton

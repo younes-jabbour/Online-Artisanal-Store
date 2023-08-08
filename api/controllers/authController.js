@@ -4,28 +4,40 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 
-// arrays to store RefreshTokens for both users ( artisan & visitor).
-let RefreshTokens = [];
+
+// const decalration
+
+const HTTP_STATUS = {
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  SUCCESS: 200,
+};
+
+const ERROR_MESSAGE = {
+  UNAUTHORIZED: "Unauthorized",
+  FORBIDDEN: "Forbidden",
+  NOT_AUTHORIZED: "You are not authorized!",
+  REFRESH_EXPIRED: "Refresh token has expired",
+};
 
 GenerateRefreshToken = (user) => {
   const payload = {
     id: user.id,
-    name: user.name,
-    email: user.email,
     type: user.type,
   };
-  return jwt.sign(payload, process.env.REFRESH_SECRET_TOKEN); // Refresh token
+  return jwt.sign(payload,process.env.REFRESH_SECRET_TOKEN,{
+    expiresIn: "1d",
+  }); // Refresh token
 };
 GenerateAccessToken = (user) => {
   const payload = {
     id: user.id,
-    name: user.name,
-    email: user.email,
     type: user.type,
   };
-  return jwt.sign(payload, process.env.ACCESS_SECRET_TOKEN,{expiresIn:'20s'}); // access token
+  return jwt.sign(payload,process.env.ACCESS_SECRET_TOKEN, {
+    expiresIn: "15m",
+  }); // access token
 };
-
 
 // login api .
 const Login = async (req, res) => {
@@ -46,16 +58,15 @@ const Login = async (req, res) => {
       email: visitor.email,
       type: type,
     };
-    console.log(visitorData);
-
-    Tokens = {
-      AccessToken: GenerateAccessToken(visitorData),
-      RefreshToken: GenerateRefreshToken(visitorData),
-    };
-    RefreshTokens.push(Tokens.RefreshToken);
 
     // generate both token and send it to client side.
-    res.status(201).json(Tokens);
+    const AccessToken = GenerateAccessToken(visitorData);
+    const RefreshToken = GenerateRefreshToken(visitorData);
+    res.cookie("JWT_RefreshToken", RefreshToken, {
+      httpOnly: true,
+    });
+    res.status(201).json({ AccessToken: AccessToken });
+
   } else if (type === "artisan") {
     const artisan = await prisma.artisan.findUnique({
       where: {
@@ -73,46 +84,69 @@ const Login = async (req, res) => {
       email: artisan.email,
       type: type,
     };
-    Tokens = {
-      AccessToken: GenerateAccessToken(artisanData),
-      RefreshToken: GenerateRefreshToken(artisanData),
-    };
-    RefreshTokens.push(Tokens.RefreshToken);
-    res.status(201).json(Tokens);
+
+    // generate both token and send it to client side.
+    const AccessToken = GenerateAccessToken(artisanData);
+    const RefreshToken = GenerateRefreshToken(artisanData);
+    res.cookie("JWT_RefreshToken", RefreshToken, {
+      httpOnly: true,
+    });
+    res.status(201).json({AccessToken: AccessToken});
   }
 };
 
 // Refresh token api.
 
 const refresh_token = (req, res) => {
-  const refresh_token = req.body.RefreshToken;
-  if (!refresh_token)
-    return res.status(401).json({ error: "you are not authorized !" });
-  // if (!RefreshTokens.includes(refresh_token))
-  //   return res.status(403).json("Refresh token invalid !");
-  jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
-    if (err) console.log(err);
+  const cookies = req.cookies;
+  console.log(cookies.JWT_RefreshToken);
 
-    // RefreshTokens = RefreshTokens.filter((token) => token !== refresh_token);
+  if (!cookies.JWT_RefreshToken) {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      error: ERROR_MESSAGE.UNAUTHORIZED,
+    });
+  }
+  const refresh_token = cookies.JWT_RefreshToken;
+
+  jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
+    if (err) return res.sendStatus(HTTP_STATUS.FORBIDDEN);
+
+    if (user.exp < Date.now() / 1000) {
+      return res
+        .status(HTTP_STATUS.FORBIDDEN)
+        .json({ error: ERROR_MESSAGE.REFRESH_EXPIRED });
+    }
 
     const newAccessToken = GenerateAccessToken(user);
-    const newRefreshToken = GenerateRefreshToken(user);
-
-    res.status(201).json({
+    res.status(HTTP_STATUS.SUCCESS).json({
       AccessToken: newAccessToken,
-      RefreshToken: newRefreshToken,
     });
   });
 };
 
+// const refresh_token = (req, res) => {
+//   const refresh_token = req.body.RefreshToken;
+//   if (!refresh_token)
+//     return res.status(401).json({ error: "you are not authorized !" });
+//   // if (!RefreshTokens.includes(refresh_token))
+//   //   return res.status(403).json("Refresh token invalid !");
+//   jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
+//     if (err) console.log(err);
+
+//     // RefreshTokens = RefreshTokens.filter((token) => token !== refresh_token);
+
+//     const newAccessToken = GenerateAccessToken(user);
+//     const newRefreshToken = GenerateRefreshToken(user);
+
+//     res.status(201).json({
+//       AccessToken: newAccessToken,
+//       RefreshToken: newRefreshToken,
+//     });
+//   });
+// };
+
 const Logout = (req, res) => {
-  // const RefreshToken = req.body.RefreshToken;
-
-  //  RefreshTokens = RefreshTokens.filter((token) => token !== RefreshToken);
-
   res.status(200).json("you logged out successfuly");
 };
 
-
 module.exports = { Login, Logout, refresh_token };
-

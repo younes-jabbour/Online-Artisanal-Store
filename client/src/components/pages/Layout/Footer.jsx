@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography } from "@material-tailwind/react";
 import logo from "../../../assets/logo2.png";
+import { useUserContext } from "../../../context/UserContext";
 
 function Footer() {
   return (

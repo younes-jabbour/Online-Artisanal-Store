@@ -1,29 +1,51 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Register from "./components/pages/register/Register";
-import Login from "./components/pages/Login/Login";
+import Register from "./components/pages/auth/register/Register";
+import Login from "./components/pages/auth/Login/Login";
 import Home from "./components/pages/Home/Home";
 import Error_page from "./components/pages/Errors/Error_page";
 import { ThemeProvider } from "@material-tailwind/react";
-import Post from "./components/pages/Login/Post"
+import Post from "./components/pages/auth/Login/Post";
+import Profile from "./components/pages/Profile/Profile";
+import Header from "./components/pages/Layout/Header";
+import Footer from "./components/pages/Layout/Footer";
+import Test from "./Test";
+import { UserProvider } from "./context/UserContext";
 
+import RequireAuth from "./components/pages/auth/RequireAuth";
+import Layout from "./components/pages/Layout";
+import Products from "./components/pages/Store/Products";
 const router = createBrowserRouter([
+  // {
+  //   path: "/",
+  //   element: <Layout />,
+  // },
   {
     path: "/",
     element: <Home />,
-    errorElement: <Error_page />,
   },
-
   {
-    path: "/register",
-    element: <Register />,
+    path: "/profile",
+    element: <Profile />,
   },
   {
     path: "/login",
     element: <Login />,
   },
   {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/test",
+    element: <Test />,
+  },
+  {
     path: "/post",
     element: <Post />,
+  },
+  {
+    path: "/products",
+    element: <Products />,
   },
 ]);
 
@@ -69,11 +91,13 @@ function App() {
       },
     },
   };
-  
+
   return (
-    <ThemeProvider value={customTheme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <UserProvider>
+      <ThemeProvider value={customTheme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </UserProvider>
   );
 }
 

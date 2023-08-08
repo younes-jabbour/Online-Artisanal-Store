@@ -14,7 +14,8 @@ model User {
   id         Int          @id @default(autoincrement())
   name       String       @db.VarChar(20)
   email      String       @unique @db.VarChar(30)
-  password   String       
+  password   String
+  ImgUrl     String?      @db.VarChar(100)
   Orders     Order[]
   Enrollment Enrollment[]
 }
@@ -22,9 +23,10 @@ model User {
 model Artisan {
   id       Int       @id @default(autoincrement())
   name     String    @db.VarChar(20)
-  password String    
+  password String
   email    String    @unique @db.VarChar(30)
-  desc     String    @db.LongText @default(" ")
+  desc     String    @default(" ") @db.LongText
+  ImgUrl   String?   @db.VarChar(100)
   Product  Product[]
   Course   Course[]
 }
@@ -35,17 +37,28 @@ model Category {
   Product Product[]
 }
 
+model Image {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  path      String
+  productId Int?
+  Product   Product?
+
+  @@unique([id, productId])
+}
+
 model Product {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(20)
-  price       Float
-  desc        String      @db.LongText
-  product_img String      @db.MediumText
-  artisanId   Int
-  artisan     Artisan     @relation(fields: [artisanId], references: [id])
-  categoryId  Int
-  category    Category    @relation(fields: [categoryId], references: [id])
-  OrderItems  OrderItem[]
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(20)
+  price      Float
+  desc       String      @db.LongText
+  artisanId  Int?
+  artisan    Artisan?    @relation(fields: [artisanId], references: [id])
+  categoryId Int
+  category   Category    @relation(fields: [categoryId], references: [id])
+  imageId    Int?        @unique
+  image      Image?      @relation(fields: [imageId], references: [id])
+  OrderItems OrderItem[]
 }
 
 model Order {

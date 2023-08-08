@@ -10,8 +10,26 @@ import {
   CardFooter,
   Avatar,
 } from "@material-tailwind/react";
+import { addProduct } from "../../../redux/cartRedux";
+import { useDispatch } from "react-redux";
+
+const urls = [
+  "http://localhost:5000/images/1.jpg",
+  "http://localhost:5000/images/2.jpg",
+  "http://localhost:5000/images/3.jpg",
+];
 
 function Hero() {
+  const [quantity, setQuantity] = useState(0);
+  const dispatch = useDispatch();
+
+  // const handleAddToCart = () => {};
+
+  const HandleClick = () => {
+    setQuantity(quantity + 1);
+    dispatch(addProduct({ quantity: quantity }));
+  };
+
   const heroSection = (
     <div className=" mt-10 flex items-center justify-center h-80 ">
       <Typography
@@ -40,10 +58,6 @@ function Hero() {
   );
 
   const [count, SetCount] = useState(0);
-
-  const HandleClick = () => {
-    SetCount((prevCount) => prevCount + 1);
-  };
 
   const card = (
     <Card shadow={true} className="w-96">
@@ -145,9 +159,9 @@ function Hero() {
         <Carousel className=" overflow-hidden">
           <div className="relative h-full w-full ">
             <img
-              src="https://picsum.photos/1300/500"
+              src={urls[0]}
               alt=" 1"
-              className="h-full w-full object-cover"
+              className="h-[520px] w-full object-cover"
             />
             <div className="absolute inset-0 grid h-full w-full place-items-center bg-black/75">
               <div className="w-3/4 text-center md:w-2/4">
@@ -156,24 +170,20 @@ function Hero() {
                   color="white"
                   className="mb-4 text-3xl md:text-4xl lg:text-5xl"
                 >
-                  The Beauty of Nature
+                  The beauty of artisanal world{" "}
                 </Typography>
                 <Typography
                   variant="lead"
                   color="white"
-                  className="mb-0 opacity-80"
+                  className="mb-0 opacity-80 leading-loose"
                 >
-                  It is not so much for its beauty that the forest makes a claim
-                  upon men&apos;s hearts, as for that subtle something, that
-                  quality of air that emanation from old trees, that so
-                  wonderfully changes and renews a weary spirit.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Quidem dicta cumque velit ratione nostrum maxime a quaerat
+                  impedit iste vero!
                 </Typography>
                 <div className="flex justify-center gap-2">
                   <Button size="lg" color="white">
-                    Explore
-                  </Button>
-                  <Button size="lg" color="white" variant="text">
-                    Gallery
+                    Go to Store
                   </Button>
                 </div>
               </div>
@@ -181,29 +191,25 @@ function Hero() {
           </div>
           <div className="relative h-full w-full">
             <img
-              src="https://picsum.photos/1300/500"
+              src={urls[1]}
               alt=" 2"
-              className="h-full w-full object-cover"
+              className="h-[520px] w-full object-cover"
             />
             <div className="absolute inset-0 grid h-full w-full items-center bg-black/75">
               <div className="w-3/4 pl-12 md:w-2/4 md:pl-20 lg:pl-32">
                 <Typography
                   variant="h1"
                   color="white"
-                  className="mb-4 text-3xl md:text-4xl lg:text-5xl"
+                  className="mb-4 text-3xl w-[500px]  md:text-4xl lg:text-5xl"
                 >
-                  The Beauty of Nature
+                  Creativity & craftsmanship ,with 100% handmade creations
+                  products
                 </Typography>
                 <Typography
                   variant="lead"
                   color="white"
                   className="mb-0 opacity-80 "
-                >
-                  It is not so much for its beauty that the forest makes a claim
-                  upon men&apos;s hearts, as for that subtle something, that
-                  quality of air that emanation from old trees, that so
-                  wonderfully changes and renews a weary spirit.
-                </Typography>
+                ></Typography>
                 <div className="flex gap-2">
                   <Button size="lg" color="white">
                     Explore
@@ -217,9 +223,9 @@ function Hero() {
           </div>
           <div className="relative h-full w-full">
             <img
-              src="https://picsum.photos/1300/500"
+              src={urls[2]}
               alt=" 3"
-              className="h-full w-full object-cover"
+              className="h-[520px] w-full object-cover"
             />
             <div className="absolute inset-0 grid h-full w-full items-end bg-black/75">
               <div className="w-3/4 pl-12 pb-12 md:w-2/4 md:pl-20 md:pb-20 lg:pl-32 lg:pb-32">
@@ -228,24 +234,19 @@ function Hero() {
                   color="white"
                   className="mb-4 text-3xl md:text-4xl lg:text-5xl"
                 >
-                  The Beauty of Nature
+                  Learn to create your own handmade products
                 </Typography>
                 <Typography
                   variant="lead"
                   color="white"
                   className="mb-12 opacity-80"
                 >
-                  It is not so much for its beauty that the forest makes a claim
-                  upon men&apos;s hearts, as for that subtle something, that
-                  quality of air that emanation from old trees, that so
-                  wonderfully changes and renews a weary spirit.
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic,
+                  tempora!
                 </Typography>
                 <div className="flex gap-2">
-                  <Button size="lg" color="white">
-                    Explore
-                  </Button>
                   <Button size="lg" color="white" variant="text">
-                    Gallery
+                    Go to learn
                   </Button>
                 </div>
               </div>
