@@ -56,16 +56,16 @@ function Profile() {
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
   const [categoryId, setCategoryId] = useState("");
-  // const [info, setInfo] = useState({ name: "empty", email: "empty" });
-
   const { userInfo } = useUserContext();
+
+  const [disabled, setDisabled] = useState(true);
+
   const id = userInfo.id;
   const type = userInfo.type;
 
   const { data, loading, error } = useFetchData(
     `http://localhost:5000/users/${type}/${id}`
   );
-  // setInfo(data);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -274,62 +274,91 @@ function Profile() {
   );
   //  border-red-300 border-solid border-2
   const inputs = (
-    <div className="mt-[-2rem]  flex flex-col h-fit items-center">
-      <div className=" rounded-full mb-3">
-        {image ? (
-          <Avatar src={image} alt="avatar" size="xl" />
-        ) : (
-          <CameraIcon className="h-12 w-12 " />
-        )}
-      </div>
-      {/* { image &&  <img src={image} alt="image_uploaded" /> } */}
-      <div
-        className=" flex w-96 flex-col items-center shadow-
+    <>
+      <div className="mt-[-2rem] mx-auto  flex flex-col h-fit items-center w-96 border-2 border-red-300 border-solid">
+        <div className=" rounded-full mb-3">
+          {image ? (
+            <Avatar src={image} alt="avatar" size="xl" />
+          ) : (
+            <CameraIcon className="h-12 w-12 " />
+          )}
+        </div>
+        {/* { image &&  <img src={image} alt="image_uploaded" /> } */}
+        <div
+          className=" flex w-96 flex-col items-center shadow-
           sm  gap-6"
-      >
-        {data && (
-          <>
-            <Input size="md" variant="static" label="name" value={data.name} />
-            <Input
-              size="md"
-              variant="static"
-              label="email"
-              value={data.email}
+        >
+          {data && (
+            <>
+              <Input
+                size="md"
+                variant="static"
+                label="name"
+                value={data.name}
+                disabled={disabled}
+              />
+              <Input
+                size="md"
+                variant="static"
+                label="email"
+                value={data.email}
+                disabled={disabled}
+              />
+            </>
+          )}
+          <Input
+            size="md"
+            variant="static"
+            value=""
+            type={visible ? "text" : "password"}
+            id="input"
+            label="password"
+            disabled
+            icon={
+              visible ? (
+                <EyeSlashIcon onClick={handlEyeClick} />
+              ) : (
+                <EyeIcon onClick={handlEyeClick} />
+              )
+            }
+          />
+          <Input
+            size="md"
+            variant="static"
+            label="Drop your image here"
+            type="file"
+            className=""
+            name="image"
+            disabled={disabled}
+            accept=".jpg, .png, .gif, .jpeg"
+            // onChange={handleFileChange}
+          />
+          {type === "artisan" && data && (
+            <Textarea
+              value={data.desc}
+              className=""
+              disabled
+              label="Description"
             />
-          </>
-        )}
-        <Input
-          size="md"
-          variant="static"
-          value="appah"
-          type={visible ? "text" : "password"}
-          id="input"
-          label="password"
-          icon={
-            visible ? (
-              <EyeSlashIcon onClick={handlEyeClick} />
-            ) : (
-              <EyeIcon onClick={handlEyeClick} />
-            )
-          }
-        />
-        <Input
-          size="md"
-          variant="static"
-          label="Drop your image here"
-          type="file"
-          className=""
-          name="image"
-          accept=".jpg, .png, .gif, .jpeg"
-          // onChange={handleFileChange}  
-        />
-        {type === "artisan" && data && (<Textarea value={data.desc} className="" label="Description" />)  }
+          )}
+        </div>
+        <div className="flex gap-5 mt-4">
+          <Button variant="filled" color="green" className="">
+            confirme changes
+          </Button>
+          <Button
+            variant="filled"
+            color="yellow"
+            onClick={() => {
+              setDisabled(false);
+            }}
+            className=""
+          >
+            update profile
+          </Button>
+        </div>
       </div>
-
-      <Button variant="outlined" className="mt-1 w-36">
-        update
-      </Button>
-    </div>
+    </>
   );
 
   return (

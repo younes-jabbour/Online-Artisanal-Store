@@ -3,7 +3,11 @@ const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
+// const cookieParser = require('cookie-parser');
+// const express = require('express');
+// const app = express();
 
+// app.use(cookieParser());
 
 // const decalration
 
@@ -25,7 +29,7 @@ GenerateRefreshToken = (user) => {
     id: user.id,
     type: user.type,
   };
-  return jwt.sign(payload,process.env.REFRESH_SECRET_TOKEN,{
+  return jwt.sign(payload, process.env.REFRESH_SECRET_TOKEN, {
     expiresIn: "1d",
   }); // Refresh token
 };
@@ -34,8 +38,8 @@ GenerateAccessToken = (user) => {
     id: user.id,
     type: user.type,
   };
-  return jwt.sign(payload,process.env.ACCESS_SECRET_TOKEN, {
-    expiresIn: "15m",
+  return jwt.sign(payload, process.env.ACCESS_SECRET_TOKEN, {
+    expiresIn: "15s",
   }); // access token
 };
 
@@ -64,9 +68,10 @@ const Login = async (req, res) => {
     const RefreshToken = GenerateRefreshToken(visitorData);
     res.cookie("JWT_RefreshToken", RefreshToken, {
       httpOnly: true,
+      // make maxage for 1 day
+      maxAge: 24 * 60 * 60 * 1000,
     });
     res.status(201).json({ AccessToken: AccessToken });
-
   } else if (type === "artisan") {
     const artisan = await prisma.artisan.findUnique({
       where: {
@@ -90,8 +95,10 @@ const Login = async (req, res) => {
     const RefreshToken = GenerateRefreshToken(artisanData);
     res.cookie("JWT_RefreshToken", RefreshToken, {
       httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
     });
-    res.status(201).json({AccessToken: AccessToken});
+
+    res.status(201).json({ AccessToken: AccessToken });
   }
 };
 
@@ -100,7 +107,6 @@ const Login = async (req, res) => {
 const refresh_token = (req, res) => {
   const cookies = req.cookies;
   console.log(cookies.JWT_RefreshToken);
-
   if (!cookies.JWT_RefreshToken) {
     return res.status(HTTP_STATUS.UNAUTHORIZED).json({
       error: ERROR_MESSAGE.UNAUTHORIZED,
@@ -111,11 +117,11 @@ const refresh_token = (req, res) => {
   jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
     if (err) return res.sendStatus(HTTP_STATUS.FORBIDDEN);
 
-    if (user.exp < Date.now() / 1000) {
-      return res
-        .status(HTTP_STATUS.FORBIDDEN)
-        .json({ error: ERROR_MESSAGE.REFRESH_EXPIRED });
-    }
+    // if (user.exp < Date.now() / 1000) {
+    //   return res
+    //     .status(HTTP_STATUS.FORBIDDEN)
+    //     .json({ error: ERROR_MESSAGE.REFRESH_EXPIRED });
+    // }
 
     const newAccessToken = GenerateAccessToken(user);
     res.status(HTTP_STATUS.SUCCESS).json({
@@ -133,8 +139,6 @@ const refresh_token = (req, res) => {
 //   jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
 //     if (err) console.log(err);
 
-//     // RefreshTokens = RefreshTokens.filter((token) => token !== refresh_token);
-
 //     const newAccessToken = GenerateAccessToken(user);
 //     const newRefreshToken = GenerateRefreshToken(user);
 
@@ -146,6 +150,8 @@ const refresh_token = (req, res) => {
 // };
 
 const Logout = (req, res) => {
+  res.clearCookie("JWT_RefreshToken");
+
   res.status(200).json("you logged out successfuly");
 };
 

@@ -11,8 +11,8 @@ const posts = {
 };
 
 router.post("/login", authController.Login);
-router.post("/refresh", authController.refresh_token);
-router.post("/logout", verifyJwtToken, authController.Logout); 
+router.get("/refresh", authController.refresh_token);
+router.post("/logout", authController.Logout); 
 
 router.get("/post", verifyJwtToken, (req, res) => {
   res.json(posts);

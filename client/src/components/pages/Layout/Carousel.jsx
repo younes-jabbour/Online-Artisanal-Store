@@ -14,9 +14,9 @@ import { addProduct } from "../../../redux/cartRedux";
 import { useDispatch } from "react-redux";
 
 const urls = [
-  "http://localhost:5000/images/1.jpg",
-  "http://localhost:5000/images/2.jpg",
-  "http://localhost:5000/images/3.jpg",
+  "http://localhost:5000/images/1.jpeg",
+  "http://localhost:5000/images/2.jpeg",
+  "http://localhost:5000/images/3.jpeg",
 ];
 
 function Hero() {

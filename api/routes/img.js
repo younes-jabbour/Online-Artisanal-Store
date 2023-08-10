@@ -1,7 +1,6 @@
 const express = require("express");
 var router = express.Router();
 const multer = require("multer");
-const cloudinary = require("../utils/cloudinary"); // Import the Cloudinary configuration
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();

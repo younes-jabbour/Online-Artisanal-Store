@@ -1,38 +1,51 @@
-// Inside your UserProvider component
-
 import React, { createContext, useContext, useState, useEffect } from "react";
+import jwtDecode from "jwt-decode";
+import api from "../components/pages/api";
+import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext();
 
-export const UserProvider = ({ children }) => {
-  // // Retrieve stored user info from localStorage
-  const storedUserInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
+function extractUserInfo(token) {
+  if (!token) return null;
+  return jwtDecode(token);
+}
 
-  // // Create the initial user context value using retrieved data
+export const UserProvider = ({ children }) => {
+  const AccessToken = localStorage.getItem("AccessToken") || null;
+
+  const user = extractUserInfo(AccessToken);
+  const navigate = useNavigate();
+
+  // Handle token check and user initialization
+  useEffect(() => {
+    if (!user) {
+      // Invalid token or expired, redirect to login
+      localStorage.clear();
+    }
+  }, [user, navigate]);
+
+  // Initialize user context
   const userContextInitialValue = {
-    id: storedUserInfo.id || null,
-    type: storedUserInfo.type || "none",
-    IsConnected: storedUserInfo.IsConnected || false,
+    id: user?.id || null,
+    type: user?.type || "none",
+    IsConnected: !!user?.id,
   };
 
   const [userInfo, setUserInfo] = useState(userContextInitialValue);
 
-  const logout = () => {
-    // Clear userInfo and remove from localStorage
-    setUserInfo({ id: null, type: "none", IsConnected: false });
-    localStorage.removeItem("userInfo");
-    localStorage.removeItem("AccessToken");
-  };
-//   const ResetUserInfo = ()=> { 
-//     setUserInfo()
-//  }
-
-  // Watch for changes in userInfo and update localStorage accordingly
-  useEffect(() => {
-    if (userInfo.IsConnected) {
-      localStorage.setItem("userInfo", JSON.stringify(userInfo));
+  const logout = async () => {
+    try {
+      const response = await api.post("/auth/logout", {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      console.log(response);
+      localStorage.clear();
+      setUserInfo({ id: null, type: "none", IsConnected: false });
+    } catch (error) {
+      console.error(error);
     }
-  }, [userInfo]);
+  };
 
   return (
     <UserContext.Provider value={{ userInfo, setUserInfo, logout }}>
@@ -40,7 +53,5 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>
   );
 };
-
-
 
 export const useUserContext = () => useContext(UserContext);

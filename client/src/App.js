@@ -1,53 +1,57 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  BrowserRouter as Router,
+  Route,
+  Routes,
+} from "react-router-dom";
 import Register from "./components/pages/auth/register/Register";
 import Login from "./components/pages/auth/Login/Login";
 import Home from "./components/pages/Home/Home";
-import Error_page from "./components/pages/Errors/Error_page";
-import { ThemeProvider } from "@material-tailwind/react";
 import Post from "./components/pages/auth/Login/Post";
 import Profile from "./components/pages/Profile/Profile";
-import Header from "./components/pages/Layout/Header";
-import Footer from "./components/pages/Layout/Footer";
 import Test from "./Test";
 import { UserProvider } from "./context/UserContext";
 
 import RequireAuth from "./components/pages/auth/RequireAuth";
 import Layout from "./components/pages/Layout";
 import Products from "./components/pages/Store/Products";
-const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <Layout />,
-  // },
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/profile",
-    element: <Profile />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    path: "/test",
-    element: <Test />,
-  },
-  {
-    path: "/post",
-    element: <Post />,
-  },
-  {
-    path: "/products",
-    element: <Products />,
-  },
-]);
+import { ThemeProvider } from "@material-tailwind/react";
+import Missing from "./components/pages/Errors/Missing";
+// const router = createBrowserRouter([
+//   // {
+//   //   path: "/",
+//   //   element: <Layout />,
+//   // },
+//   {
+//     path: "/",
+//     element: <Home />,
+//   },
+//   {
+//     path: "/profile",
+//     element: <Profile />,
+//   },
+//   {
+//     path: "/login",
+//     element: <Login />,
+//   },
+//   {
+//     path: "/register",
+//     element: <Register />,
+//   },
+//   {
+//     path: "/test",
+//     element: <Test />,
+//   },
+//   {
+//     path: "/post",
+//     element: <Post />,
+//   },
+//   {
+//     path: "/products",
+//     element: <Products />,
+//   },
+// ]);
 
 function App() {
   const customTheme = {
@@ -93,11 +97,25 @@ function App() {
   };
 
   return (
-    <UserProvider>
-      <ThemeProvider value={customTheme}>
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </UserProvider>
+    <ThemeProvider value={customTheme}>
+      {/* <RouterProvider router={router} /> */}
+      <Router>
+        <UserProvider>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/test" element={<Test />} />
+              <Route path="/post" element={<Post />} />
+              <Route path="/products" element={<Products />} />
+            </Route>
+            <Route path="*" element={<Missing />} />
+          </Routes>
+        </UserProvider>
+      </Router>
+    </ThemeProvider>
   );
 }
 

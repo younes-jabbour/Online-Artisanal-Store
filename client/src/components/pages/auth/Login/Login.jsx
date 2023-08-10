@@ -16,6 +16,8 @@ import {
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import jwtDecode from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../../../redux/userSlice";
 
 function extarctInfo(token) {
   return jwtDecode(token);
@@ -80,10 +82,9 @@ function Login() {
   });
   const [user, setUser] = useState({});
   const from = location.state?.from?.pathname || "/";
-
-  // const [visible, setVisible] = useState(false);
-
   const { userInfo, setUserInfo } = useUserContext();
+
+  const dispatch = useDispatch();
 
   const alertProps = {
     open: open,
@@ -146,13 +147,19 @@ function Login() {
         );
         // console.log(response.data)
         localStorage.setItem("AccessToken", response.data.AccessToken);
-        // // // localStorage.setItem("RefreshToken", response.data.RefreshToken);
-        // Setsuccess(true);
-        const data = extarctInfo(response.data.AccessToken);
-        const UserJson = { id: data.id, type: data.type, IsConnected: true };
-        setUserInfo(UserJson);
+        // localStorage.setItem("RefreshToken", response.data.RefreshToken);
+        Setsuccess(true);
+        // const data = extarctInfo(response.data.AccessToken);
+        // const UserJson = {
+        //   id: data.id,
+        //   type: data.type,
+        //   IsConnected: true,
+        //   AccessToken: response.data.AccessToken,
+        // };
+        // setUserInfo(UserJson);
         // localStorage.setItem("userInfo", JSON.stringify(UserJson));
-        // navigate(from, { replace: true });
+        console.log("successfuly stored , Go to userContext");
+        window.location.href = "/";
       }
     } catch (err) {
       Setsuccess(false);
@@ -169,7 +176,14 @@ function Login() {
     }
   };
 
-  console.log(inputs);
+  // useEffect(() => {
+  //   dispatch(
+  //     setUser({
+  //       AccessToken: localStorage.getItem("AccessToken"),
+  //       userInfo: userInfo,
+  //     })
+  //   );
+  // }, [userInfo]);
 
   return (
     <>

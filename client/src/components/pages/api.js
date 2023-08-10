@@ -7,6 +7,7 @@ const HTTP_STATUS = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   SUCCESS: 200,
+  CREATED: 201,
 };
 
 const ERROR_MESSAGE = {
@@ -18,13 +19,14 @@ const ERROR_MESSAGE = {
 
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
   try {
     const AccessToken = localStorage.getItem("AccessToken");
     if (!AccessToken) {
-      // window.location.href = "/login";
+      window.location.href = "/login";
       localStorage.clear();
     } else config.headers.Authorization = `Bearer ${AccessToken}`;
 
@@ -36,34 +38,35 @@ api.interceptors.request.use((config) => {
   }
 });
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   async (error) => {
-//     if (error.response.status === HTTP_STATUS.FORBIDDEN) {
-//       // console.log(error.response.status);
-//       try {
-//         const refreshResponse = await axios.post(`${BASE_URL}/auth/refresh`, {
-//           withCredentials: true,
-//         });
-//         if (refreshResponse.status === HTTP_STATUS.SUCCESS) {
-//           const newAccessToken = refreshResponse.data.AccessToken;
-//           localStorage.setItem("AccessToken", newAccessToken);
-//           const originalRequest = error.config;
-//           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-//           return api(originalRequest);
-//         }
-//       } catch (refreshError) {
-//         console.error("Both tokens expired:", refreshError);
-//         // window.location.href = "/login";
-//         // localStorage.clear();
-//         console.log("Both tokens expired");
-//       }
-//     } else if (error.response.status === HTTP_STATUS.UNAUTHORIZED) {
-//       console.log("Unauthorized");
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response.status === HTTP_STATUS.FORBIDDEN) {
+      try {
+        const refreshResponse = await axios.get(`${BASE_URL}/auth/refresh`, {
+          withCredentials: true,
+        });
+        if (refreshResponse.status === HTTP_STATUS.SUCCESS) {
+          // FOR TESTING PURPOSES
+          const newAccessToken = refreshResponse.data.AccessToken;
+          localStorage.setItem("AccessToken", newAccessToken);
+          const originalRequest = error.config;
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return api(originalRequest);
+        }
+      } catch (refreshError) {
+        if (refreshError.response.status === HTTP_STATUS.UNAUTHORIZED) {
+          console.error(" ANAUTHORIZED ", refreshError);
+        }
+      }
+    } else if (error.response.status === HTTP_STATUS.UNAUTHORIZED) {
+      console.error("Unauthorized");
+      localStorage.clear();
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default api;
 
