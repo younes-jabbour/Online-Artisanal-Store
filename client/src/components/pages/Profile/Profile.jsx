@@ -10,11 +10,6 @@ import {
   Breadcrumbs,
   Button,
   Input,
-  // IconButton,
-  // SpeedDial,
-  // SpeedDialHandler,
-  // SpeedDialContent,
-  // SpeedDialAction,
   Typography,
   Dialog,
   DialogHeader,
@@ -39,14 +34,10 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "../../../context/UserContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link, Outlet } from "react-router-dom";
 import useFetchData from "../../../hooks/useFetchData";
 
 function Profile() {
-  const location = useLocation();
-
-  // const [selectedFile, setSelectedFile] = useState(null);
-  // const [image, Setimage] = useState(null);
   const [categories, Setcategories] = useState([]);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -56,6 +47,19 @@ function Profile() {
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
   const [categoryId, setCategoryId] = useState("");
+
+  //users update info
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [descUser, setDescUser] = useState("");
+  const [imgUser, setImgUser] = useState(null);
+  const userinfo = {
+    userName,
+    email,
+    descUser,
+    imgUser,
+  };
+
   const { userInfo } = useUserContext();
 
   const [disabled, setDisabled] = useState(true);
@@ -63,9 +67,28 @@ function Profile() {
   const id = userInfo.id;
   const type = userInfo.type;
 
+  //Get user info by type (artisan or client)
   const { data, loading, error } = useFetchData(
     `http://localhost:5000/users/${type}/${id}`
   );
+
+  const UpdateUserInfo = async (e) => {
+    // update request handler
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append("name", userName);
+      formData.append("email", email);
+      formData.append("img", imgUser);
+      if (type === "artisan") formData.append("desc", descUser);
+      const response = await api.put(`/users/update/${type}/${id}`, formData, {
+        withCredentials: true,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -76,11 +99,14 @@ function Profile() {
       formData.append("desc", desc);
       formData.append("product_img", image);
       formData.append("categoryId", categoryId);
+      console.log(formData);
 
-      const response = await api.post("/product", formData, {
+      const response = await api.post(`/product/newProduct/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
       });
       console.log(response.data);
+      handleOpen();
     } catch (error) {
       console.log(error);
     }
@@ -88,23 +114,17 @@ function Profile() {
 
   useEffect(() => {
     const getCategories = async () => {
-      try {
-        const response = await api.get("/categorie");
-        Setcategories(response.data);
-      } catch (error) {
-        console.log(error);
+      if (userInfo.type === "artisan") {
+        try {
+          const response = await api.get("/categorie");
+          Setcategories(response.data);
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
     getCategories();
   }, []);
-
-  // const handleFileChange = (e) => {
-  //   const formData = new FormData();
-  //   formData.append("image", e.target.files[0]);
-  //   Setinputs((prevState) => ({ ...prevState, product_img: formData }));
-  // };
-
-  // const FormatImages = () => {};
 
   const handleButtonClick = () => {
     // Call both functions when the button is clicked
@@ -116,33 +136,6 @@ function Profile() {
   };
 
   const handleOpen = () => setOpen(!open);
-
-  // const labelProps = {
-  //   variant: "small",
-  //   color: "blue-gray",
-  //   className:
-  //     "absolute top-2/4 -left-2/4 -translate-y-2/4 -translate-x-3/4 font-normal w-32 ",
-  // };
-
-  // const speed_dial = (
-  //   <div className="relative h-12 w-full pr-10 border-solid border-2 border-green-700 ">
-  //     <div className="absolute bottom-2 right-4">
-  //       <SpeedDial>
-  //         <SpeedDialHandler>
-  //           <IconButton size="lg" className="rounded-full">
-  //             <PlusIcon className="h-5 w-5 transition-transform group-hover:rotate-45" />
-  //           </IconButton>
-  //         </SpeedDialHandler>
-  //         <SpeedDialContent>
-  //           <SpeedDialAction>
-  //             <HomeIcon className="h-5 w-5" />
-  //             <Typography {...labelProps}>Create Product</Typography>
-  //           </SpeedDialAction>
-  //         </SpeedDialContent>
-  //       </SpeedDial>
-  //     </div>
-  //   </div>
-  // );
 
   const side_bar = (
     <Card className="h-fit w-full  rounded-none max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
@@ -164,21 +157,23 @@ function Profile() {
           </ListItemPrefix>
           <span onClick={handleButtonClick}>Create new product</span>
         </ListItem>
-        <ListItem>
-          <ListItemPrefix>
-            <InboxIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          List of Products
-          <ListItemSuffix>
-            <Chip
-              value="14"
-              size="sm"
-              variant="ghost"
-              color="blue-gray"
-              className="rounded-full"
-            />
-          </ListItemSuffix>
-        </ListItem>
+        <Link to="/profile/list_of_products">
+          <ListItem>
+            <ListItemPrefix>
+              <InboxIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            List of Products
+            <ListItemSuffix>
+              <Chip
+                value="14"
+                size="sm"
+                variant="ghost"
+                color="blue-gray"
+                className="rounded-full"
+              />
+            </ListItemSuffix>
+          </ListItem>
+        </Link>
         <ListItem>
           <ListItemPrefix>
             <PresentationChartBarIcon className="h-5 w-5" />
@@ -272,10 +267,9 @@ function Profile() {
       </Dialog>
     </>
   );
-  //  border-red-300 border-solid border-2
   const inputs = (
     <>
-      <div className="mt-[-2rem] mx-auto  flex flex-col h-fit items-center w-96 border-2 border-red-300 border-solid">
+      <div className="mt-[-2rem] mx-auto  flex flex-col h-fit items-center w-96">
         <div className=" rounded-full mb-3">
           {image ? (
             <Avatar src={image} alt="avatar" size="xl" />
@@ -283,7 +277,6 @@ function Profile() {
             <CameraIcon className="h-12 w-12 " />
           )}
         </div>
-        {/* { image &&  <img src={image} alt="image_uploaded" /> } */}
         <div
           className=" flex w-96 flex-col items-center shadow-
           sm  gap-6"
@@ -292,28 +285,30 @@ function Profile() {
             <>
               <Input
                 size="md"
-                variant="static"
+                variant="outlined"
                 label="name"
-                value={data.name}
                 disabled={disabled}
+                value={disabled ? data.name : null}
+                onChange={(e) => setUserName(e.target.value)}
               />
               <Input
                 size="md"
-                variant="static"
+                variant="outlined"
                 label="email"
-                value={data.email}
                 disabled={disabled}
+                value={disabled ? data.email : null}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </>
           )}
           <Input
             size="md"
-            variant="static"
+            variant="outlined"
             value=""
             type={visible ? "text" : "password"}
             id="input"
+            disabled={disabled}
             label="password"
-            disabled
             icon={
               visible ? (
                 <EyeSlashIcon onClick={handlEyeClick} />
@@ -324,26 +319,32 @@ function Profile() {
           />
           <Input
             size="md"
-            variant="static"
+            variant="outlined"
             label="Drop your image here"
             type="file"
             className=""
             name="image"
-            disabled={disabled}
             accept=".jpg, .png, .gif, .jpeg"
-            // onChange={handleFileChange}
+            disabled={disabled}
+            onChange={(e) => setImgUser(e.target.files[0])}
           />
           {type === "artisan" && data && (
             <Textarea
-              value={data.desc}
+              value={disabled ? data.desc : null}
+              disabled={disabled}
               className=""
-              disabled
+              onChange={(e) => setDescUser(e.target.value)}
               label="Description"
             />
           )}
         </div>
         <div className="flex gap-5 mt-4">
-          <Button variant="filled" color="green" className="">
+          <Button
+            variant="filled"
+            color="green"
+            onClick={UpdateUserInfo}
+            className=""
+          >
             confirme changes
           </Button>
           <Button
@@ -371,10 +372,10 @@ function Profile() {
               {/* <a href="1" className="opacity-60">
                 Docs
               </a> */}
-              <a href="2" className="opacity-60">
+              <Link to="/" className="opacity-60">
                 Home
-              </a>
-              <a href="3">Profile</a>
+              </Link>
+              <a href="/profile">Profile</a>
             </Breadcrumbs>
           </div>
           {type === "artisan" ? (
@@ -388,7 +389,7 @@ function Profile() {
           )}
         </>
       ) : (
-        <Navigate to="/" replace={true} state={{ from: location }} />
+        <Navigate to="/" replace={true} />
       )}
     </>
   );

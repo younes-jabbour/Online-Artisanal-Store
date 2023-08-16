@@ -24,54 +24,45 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 
 const img_url =
   "https://www.lavieeco.com/wp-content/uploads/2023/04/porterie-artisanat-maroc-tourisme-maroc.jpg";
-const border_style = "border-solid border-red-300 border-2";
 
-const orders_card = (
-  <Card className="max-w-[30rem] max-h-[20rem] p-0 flex-row border-solid border-red-300 border-2">
-    <CardHeader
-      shadow={false}
-      floated={false}
-      className="m-0 w-2/5 shrink-0 rounded-r-none"
-    >
-      <img
-        src={img_url}
-        alt="card_image"
-        className="h-full w-full object-cover"
-      />
-    </CardHeader>
-    <CardBody className="m-0 pt-1 grow-0 border-solid border-red-300 border-2 ">
-      <Typography variant="h4" color="blue-gray" className="">
-        {/* poduct title here */}
-        product title
-      </Typography>
-      <Typography color="gray" className="mb-8 font-normal">
-        {/* description here , example : $product_name + from the category of + $category_name */}
-        test
-      </Typography>
-      {/* { buttom place } */}
-      <ButtonGroup variant="outlined" size="sm">
-        <Button ripple={false}>
-          <PlusIcon className="h-4 w-4" />
-        </Button>
-        <Chip value="1" className="px-3" />
-        <Button ripple={false}>
-          <MinusIcon className="h-4 w-4" />
-        </Button>
-      </ButtonGroup>
-    </CardBody>
-    <div className="flex flex-col justify-between border-solid border-red-300 border-2">
-      <IconButton
-        variant="text"
-        ripple={false}
-        className="border-solid border-red-300 border-2 justify-self-end hover:bg-[#F07470]/10 focus:shadow-[#333333]/20 active:shadow-[#333333]/10"
+const OrderCard = () => {
+  return (
+    <Card className="max-w-[26rem] max-h-[110px] p-0 flex-row ">
+      <CardHeader
+        shadow={false}
+        floated={false}
+        className="m-0 w-2/5 shrink-0 rounded-r-none"
       >
-        <TrashIcon color="red" className=" w-5 h-5" />
-      </IconButton>
-      <Chip value="12 MAD" className="mb-7 px-3" />
-    </div>
-  </Card>
-);
+        <img
+          src={img_url}
+          alt="card_image"
+          className="h-full m-0 w-full object-cover"
+        />
+      </CardHeader>
+      <CardBody className="m-0 pt-1 flex flex-col justify-between">
+        <Typography variant="h4" color="blue-gray" className="">
+          product title
+        </Typography>
 
+        <ButtonGroup variant="outlined" className="mb-[-1rem]" size="sm">
+          <Button ripple={false}>
+            <PlusIcon className="h-4 w-4" />
+          </Button>
+          <Chip value="1" className="px-3" />
+          <Button ripple={false}>
+            <MinusIcon className="h-4 w-4" />
+          </Button>
+        </ButtonGroup>
+      </CardBody>
+      <div className="flex flex-col justify-between items-center">
+        <IconButton variant="text" color="red" ripple={false}>
+          <TrashIcon color="red" className=" w-5 h-5" />
+        </IconButton>
+        <Chip value="12 $" className="px-3 mb-3" />
+      </div>
+    </Card>
+  );
+};
 export function DrawerCpt({ props }) {
   const { open, closeDrawer, openDrawer } = props;
 
@@ -113,11 +104,36 @@ export function DrawerCpt({ props }) {
           </IconButton>
         </div>
         {/* overflow-scroll */}
-        <div className="h-screen mb-56 flex flex-col overflow-y-auto">
-          <div className="flex flex-row mt-6 flex-wrap gap-2">
-            {orders_card}
-            {orders_card}
+        <div className="h-screen border-red-600 border-2 border-solid grid grid-cols-2 overflow-y-auto">
+          <div className="flex flex-row flex-wrap gap-3 border-black border-2 border-solid overflow-y-auto">
+            <OrderCard />
           </div>
+          <Card className="mt-6 w-96 h-fit justify-self-center ">
+            <CardBody>
+              <Typography
+                variant="h5"
+                color="blue-gray"
+                className="mb-2 text-center"
+              >
+                Summary of your items
+              </Typography>
+              <br />
+              <div className=" flex justify-between">
+                <span>item 1</span>
+                <span>12$</span>
+              </div>
+              <hr />
+              <div className=" flex justify-between mt-10">
+                <span>Total</span>
+                <Chip value="12$" className="w-10" />
+              </div>
+            </CardBody>
+            <CardFooter className="pt-0">
+              <Button shadow={false} fullWidth>
+                Go to paymenent
+              </Button>
+            </CardFooter>
+          </Card>
         </div>
       </Drawer>
     </React.Fragment>

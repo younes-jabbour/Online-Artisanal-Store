@@ -48,6 +48,7 @@ api.interceptors.response.use(
         });
         if (refreshResponse.status === HTTP_STATUS.SUCCESS) {
           // FOR TESTING PURPOSES
+          console.log("Refreshed Token");
           const newAccessToken = refreshResponse.data.AccessToken;
           localStorage.setItem("AccessToken", newAccessToken);
           const originalRequest = error.config;
@@ -57,12 +58,10 @@ api.interceptors.response.use(
       } catch (refreshError) {
         if (refreshError.response.status === HTTP_STATUS.UNAUTHORIZED) {
           console.error(" ANAUTHORIZED ", refreshError);
+          localStorage.clear();
+          window.location.href = "/anauthorized";
         }
       }
-    } else if (error.response.status === HTTP_STATUS.UNAUTHORIZED) {
-      console.error("Unauthorized");
-      localStorage.clear();
-      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

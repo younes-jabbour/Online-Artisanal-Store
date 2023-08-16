@@ -9,14 +9,9 @@ const cartSlice = createSlice({
   },
   reducers: {
     addProduct: (state, action) => {
-      const product = action.payload;
-      const index = state.products.findIndex((item) => item.id === product.id);
-      if (index >= 0) {
-        state.products[index].quantity += 1;
-      } else {
-        state.products.push(product);
-      }
+      const product = action.payload.product;
       state.quantity += 1;
+      state.products.push(product);
       state.total += product.price;
     },
   },

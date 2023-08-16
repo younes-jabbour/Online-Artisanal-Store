@@ -18,46 +18,15 @@ import Layout from "./components/pages/Layout";
 import Products from "./components/pages/Store/Products";
 import { ThemeProvider } from "@material-tailwind/react";
 import Missing from "./components/pages/Errors/Missing";
-// const router = createBrowserRouter([
-//   // {
-//   //   path: "/",
-//   //   element: <Layout />,
-//   // },
-//   {
-//     path: "/",
-//     element: <Home />,
-//   },
-//   {
-//     path: "/profile",
-//     element: <Profile />,
-//   },
-//   {
-//     path: "/login",
-//     element: <Login />,
-//   },
-//   {
-//     path: "/register",
-//     element: <Register />,
-//   },
-//   {
-//     path: "/test",
-//     element: <Test />,
-//   },
-//   {
-//     path: "/post",
-//     element: <Post />,
-//   },
-//   {
-//     path: "/products",
-//     element: <Products />,
-//   },
-// ]);
+import ListProducts from "./components/pages/Profile/artisan/ListProducts";
+import Anauthorized from "./components/pages/Errors/Anauthorized";
 
 function App() {
   const customTheme = {
+   
     drawer: {
       defaultProps: {
-        size: 800,
+        size: 1200,
         overlay: true,
         placement: "left",
         overlayProps: undefined,
@@ -105,11 +74,16 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile />} />
+              <Route
+                path="/profile/list_of_products"
+                element={<ListProducts />}
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/test" element={<Test />} />
               <Route path="/post" element={<Post />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/anauthorized" element={<Anauthorized />} />
             </Route>
             <Route path="*" element={<Missing />} />
           </Routes>

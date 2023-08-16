@@ -13,7 +13,7 @@ function extractUserInfo(token) {
 export const UserProvider = ({ children }) => {
   const AccessToken = localStorage.getItem("AccessToken") || null;
 
-  const user = extractUserInfo(AccessToken);
+  const user = extractUserInfo(AccessToken === null ? undefined : AccessToken);
   const navigate = useNavigate();
 
   // Handle token check and user initialization

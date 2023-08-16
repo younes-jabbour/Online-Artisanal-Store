@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import thunkMiddleware from "redux-thunk";
 
 import cartReducer from "./cartRedux";
 import userReducer from "./userSlice";
@@ -11,5 +10,4 @@ export default configureStore({
     user: userReducer,
     // products: productsReducer,
   },
-  middleware: [thunkMiddleware],
 });

@@ -13,7 +13,7 @@ const useFetchData = (url, id = null, type) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          id && type ? `${url}/${type}/${id}` : url
+          id && type ? `${url}/${type}/${id}` : id ? `${url}/${id}` : url 
         );
         setData(response.data);
         setLoading(false);

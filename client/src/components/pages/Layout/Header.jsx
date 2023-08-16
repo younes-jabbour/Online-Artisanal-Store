@@ -24,22 +24,23 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 
-function Header({ count }) {
+function Header() {
   const cart = useSelector((state) => state.cart); // hook from redux
   const quantity = useSelector((state) => state.cart.quantity);
-  // console.log(quantity);
   const [openNav, setOpenNav] = React.useState(false);
   const [Visible, Setvisible] = useState(false);
-
+  const [Mounted, setMounted] = useState(false);
   const { userInfo, logout } = useUserContext();
-  // console.log(userInfo);
-  // const [userData, SetuserData] = useState({});
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   useEffect(() => {
     if (quantity === 0) return Setvisible(true);
     else return Setvisible(false);
   }, [quantity, Visible]);
-  // console.log(Visible);
 
   // Drawer states
   const [open, setOpen] = React.useState(false);
@@ -126,11 +127,13 @@ function Header({ count }) {
   const shoppingCard = (
     <div onClick={openDrawer} className="mr-2">
       {/* <Badge content={count} invisible={Visible} withBorder> */}
-      <Badge content={quantity} invisible={Visible} withBorder>
-        <IconButton variant="text">
-          <ShoppingCartIcon className="h-7 w-7 to-black" />
-        </IconButton>
-      </Badge>
+      {Mounted && (
+        <Badge content={quantity} invisible={Visible} withBorder>
+          <IconButton variant="text">
+            <ShoppingCartIcon className="h-7 w-7 to-black" />
+          </IconButton>
+        </Badge>
+      )}
     </div>
   );
 
@@ -173,17 +176,16 @@ function Header({ count }) {
               7irafi.
             </Typography>
           </Link>
-          <div className="hidden lg:block">{navList}</div>
-          <div className="hidden lg:flex gap-2">
-            <div className={userInfo.IsConnected ? "block" : "hidden"}>
-              {UserMenu}
-            </div>
-            {shoppingCard}
-            <div className={userInfo.IsConnected ? "hidden" : "block"}>
-              {buttoms}
-            </div>
-          </div>
-
+          {Mounted && (
+            <>
+              <div className="hidden lg:block">{navList}</div>
+              <div className="hidden lg:flex gap-2">
+                {userInfo.IsConnected ? UserMenu : null}
+                {shoppingCard}
+                {userInfo.IsConnected ? null : buttoms}
+              </div>
+            </>
+          )}
           <IconButton
             variant="text"
             className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -226,8 +228,10 @@ function Header({ count }) {
           <div className="container mb-2 mx-auto">
             {navList}
             {shoppingCard}
-            {UserMenu}
-            <div className="flex flex-wrap gap-2">{buttoms}</div>
+            {userInfo.IsConnected ? UserMenu : null}
+            {userInfo.IsConnected ? null : (
+              <div className="flex flex-wrap gap-2">{buttoms}</div>
+            )}
           </div>
         </Collapse>
       </Navbar>

@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 const urls = [
   "http://localhost:5000/images/1.jpeg",
   "http://localhost:5000/images/2.jpeg",
-  "http://localhost:5000/images/3.jpeg",
+  "http://localhost:5000/images/3.jpg",
 ];
 
 function Hero() {
