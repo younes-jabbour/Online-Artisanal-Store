@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Header from "../Layout/Header";
 import {
   ShoppingCartIcon,
   ArrowLongRightIcon,
@@ -274,7 +273,6 @@ function Products() {
 
   return (
     <>
-      <Header />
       {HeroSection}
       <div className="flex gap-6 flex-wrap my-12 mx-9 justify-center">
         <CardWithImage ImgUrl={ImgUrl[0]} title="carpets" />

@@ -73,12 +73,12 @@ function Login() {
   const closeAlert = () => setOpen(false);
   const [success, Setsuccess] = useState(false);
   const [ErrorMessage, setErrorMessage] = useState(" ");
-  const [input, setInput] = useState();
+  // const [input, setInput] = useState();
   const [errors, setErrors] = useState({});
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
-    type: input,
+    // type: input,
   });
   const [user, setUser] = useState({});
   const from = location.state?.from?.pathname || "/";
@@ -119,9 +119,9 @@ function Login() {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleChange2 = (value) => {
-    setInputs((prev) => ({ ...prev, type: value }));
-  };
+  // const handleChange2 = (value) => {
+  //   setInputs((prev) => ({ ...prev, type: value }));
+  // };
   // useEffect(() => {
   //   if (success && user.id) {
   //
@@ -135,30 +135,17 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
+    console.log(inputs);
     try {
       if (isFormValid) {
-        const response = await axios.post(
-          "http://localhost:5000/auth/login",
-          inputs,
-          {
+        const response = await axios
+          .post("http://localhost:5000/auth/login", inputs, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
-        );
-        // console.log(response.data)
+          })
+        console.log(response.data)
         localStorage.setItem("AccessToken", response.data.AccessToken);
-        // localStorage.setItem("RefreshToken", response.data.RefreshToken);
         Setsuccess(true);
-        // const data = extarctInfo(response.data.AccessToken);
-        // const UserJson = {
-        //   id: data.id,
-        //   type: data.type,
-        //   IsConnected: true,
-        //   AccessToken: response.data.AccessToken,
-        // };
-        // setUserInfo(UserJson);
-        // localStorage.setItem("userInfo", JSON.stringify(UserJson));
-        console.log("successfuly stored , Go to userContext");
         window.location.href = "/";
       }
     } catch (err) {
@@ -246,7 +233,7 @@ function Login() {
 
                 {/* radio buttoms */}
 
-                <div className="flex gap-10 justify-center">
+                {/* <div className="flex gap-10 justify-center">
                   <Radio
                     name="type"
                     color="brown"
@@ -267,7 +254,7 @@ function Login() {
                       handleChange2("artisan");
                     }}
                   />
-                </div>
+                </div> */}
                 <Button
                   className="mt-6"
                   variant="filled"

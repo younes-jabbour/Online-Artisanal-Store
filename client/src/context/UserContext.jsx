@@ -14,15 +14,16 @@ export const UserProvider = ({ children }) => {
   const AccessToken = localStorage.getItem("AccessToken") || null;
 
   const user = extractUserInfo(AccessToken === null ? undefined : AccessToken);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // Handle token check and user initialization
   useEffect(() => {
-    if (!user) {
+    if (user === null) {
       // Invalid token or expired, redirect to login
       localStorage.clear();
+      setUserInfo({ id: null, type: "none", IsConnected: false });
     }
-  }, [user, navigate]);
+  }, [user]);
 
   // Initialize user context
   const userContextInitialValue = {
@@ -33,13 +34,13 @@ export const UserProvider = ({ children }) => {
 
   const [userInfo, setUserInfo] = useState(userContextInitialValue);
 
+  //logout function
   const logout = async () => {
     try {
       const response = await api.post("/auth/logout", {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
-      console.log(response);
       localStorage.clear();
       setUserInfo({ id: null, type: "none", IsConnected: false });
     } catch (error) {

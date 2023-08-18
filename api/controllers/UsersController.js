@@ -32,7 +32,7 @@ const CreateUser = async (req, res) => {
     return res.status(409).json({ error: "Email already exists" });
   }
 
-  const { name, email } = req.body;
+  const { name, email, role } = req.body;
   const salt = await bcrypt.genSalt(10);
   const hashpassword = await bcrypt.hash(req.body.password, salt);
   try {
@@ -41,6 +41,7 @@ const CreateUser = async (req, res) => {
         name: name,
         email: email,
         password: hashpassword,
+        role: role,
       },
     });
     res.status(201).json(user);
@@ -52,50 +53,42 @@ const CreateUser = async (req, res) => {
 
 // function that create a new artisan
 
-const CreateArtisan = async (req, res) => {
-  const artisan = await prisma.artisan.findUnique({
-    where: { email: req.body.email },
-  });
-  if (artisan) return res.status(409).json({ error: "Email already exists" });
+// const CreateArtisan = async (req, res) => {
+//   const artisan = await prisma.artisan.findUnique({
+//     where: { email: req.body.email },
+//   });
+//   if (artisan) return res.status(409).json({ error: "Email already exists" });
 
-  const { name, email, password } = req.body;
-  const salt = await bcrypt.genSalt(10);
-  const hashpassword = await bcrypt.hash(password, salt);
-  try {
-    const artisan = await prisma.artisan.create({
-      data: {
-        name,
-        email,
-        password: hashpassword,
-      },
-    });
-    res.status(201).json(artisan);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
+//   const { name, email, password } = req.body;
+//   const salt = await bcrypt.genSalt(10);
+//   const hashpassword = await bcrypt.hash(password, salt);
+//   try {
+//     const artisan = await prisma.artisan.create({
+//       data: {
+//         name,
+//         email,
+//         password: hashpassword,
+//       },
+//     });
+//     res.status(201).json(artisan);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
 // function that log new users (visitor or artisan ) and assign to each one a unique JWT Token.
 
 const GetUserById = async (req, res) => {
   const id = parseInt(req.params.id);
-  const type = req.params.type;
-  if (type === "visitor") {
-    const user = await prisma.user.findUnique({
-      where: { id: id },
-    });
-    if (!user) return res.status(404).json({ error: "User not found" });
-    // get normal password from the hashed password user.hashpassword
+  const user = await prisma.user.findUnique({
+    where: { id: id },
+  });
+  console.log(user);
+  if (!user) return res.status(404).json({ error: "User not found" });
+  // get normal password from the hashed password user.hashpassword
 
-    res.status(200).json(user);
-  } else if (type === "artisan") {
-    const artisan = await prisma.artisan.findUnique({
-      where: { id: id },
-    });
-    if (!artisan) return res.status(404).json({ error: "Artisan not found" });
-    res.status(200).json(artisan);
-  }
+  res.status(200).json(user);
 };
 
 // update user
@@ -150,4 +143,6 @@ const UpdateUser = async (req, res) => {
   // }
 };
 
-module.exports = { CreateUser, CreateArtisan, GetUserById, UpdateUser };
+module.exports = { CreateUser, GetUserById, UpdateUser };
+
+//CreateArtisan

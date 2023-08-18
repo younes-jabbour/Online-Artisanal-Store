@@ -26,8 +26,8 @@ api.interceptors.request.use((config) => {
   try {
     const AccessToken = localStorage.getItem("AccessToken");
     if (!AccessToken) {
-      window.location.href = "/login";
       localStorage.clear();
+      window.location.href = "/anauthorized";
     } else config.headers.Authorization = `Bearer ${AccessToken}`;
 
     return config;

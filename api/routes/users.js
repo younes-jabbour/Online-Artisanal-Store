@@ -6,10 +6,10 @@ const UpdateUser = require("../controllers/UsersController");
 const JwtToken = require("../Middlewares/JwtToken");
 
 router.post("/register", UsersController.CreateUser);
-router.post("/register/artisan", UsersController.CreateArtisan);
+// router.post("/register/artisan", UsersController.CreateArtisan);
 
 router.put("/update/:type/:id", JwtToken, UsersController.UpdateUser);
 
-router.get("/:type/:id", UsersController.GetUserById);
+router.get("/:id", UsersController.GetUserById);
 
 module.exports = router;

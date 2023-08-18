@@ -20,10 +20,11 @@ import { ThemeProvider } from "@material-tailwind/react";
 import Missing from "./components/pages/Errors/Missing";
 import ListProducts from "./components/pages/Profile/artisan/ListProducts";
 import Anauthorized from "./components/pages/Errors/Anauthorized";
+import LandingPage from "./components/learning/LandingPage";
+import Dashboard from "./components/learning/artisan/Dashboard";
 
 function App() {
   const customTheme = {
-   
     drawer: {
       defaultProps: {
         size: 1200,
@@ -67,24 +68,33 @@ function App() {
 
   return (
     <ThemeProvider value={customTheme}>
-      {/* <RouterProvider router={router} /> */}
       <Router>
         <UserProvider>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route
-                path="/profile/list_of_products"
-                element={<ListProducts />}
-              />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/test" element={<Test />} />
-              <Route path="/post" element={<Post />} />
+              {/* private routes require authentication */}
+              <Route element={<RequireAuth />}>
+                <Route path="/profile" element={<Profile />} />
+                <Route
+                  path="/profile/list_of_products"
+                  element={<ListProducts />}
+                />
+                  <Route
+                  path="/profile/course"
+                  element={<Dashboard />}
+                />
+              </Route>
+              {/* public routes */}
               <Route path="/products" element={<Products />} />
-              <Route path="/anauthorized" element={<Anauthorized />} />
+              <Route path="/learn" element={<LandingPage />} />
             </Route>
+            {/* without layout */}
+            <Route path="/post" element={<Post />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/anauthorized" element={<Anauthorized />} />
             <Route path="*" element={<Missing />} />
           </Routes>
         </UserProvider>

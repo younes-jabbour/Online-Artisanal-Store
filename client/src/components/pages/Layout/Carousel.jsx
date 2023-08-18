@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "./Header";
 import {
   Carousel,
   Typography,
@@ -154,7 +153,6 @@ function Hero() {
 
   return (
     <>
-      <Header count={count} />
       <div className="hidden lg:block ">
         <Carousel className=" overflow-hidden">
           <div className="relative h-full w-full ">

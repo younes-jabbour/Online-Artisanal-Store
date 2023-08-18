@@ -114,14 +114,16 @@ function Header() {
           product
         </Typography>
       </Link>
-      <Typography
-        as="li"
-        color="blue-gray"
-        className="p-1 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
-      >
-        <BookOpenIcon className="w-4 h-4" />
-        learn
-      </Typography>
+      <Link to="/learn">
+        <Typography
+          as="li"
+          color="blue-gray"
+          className="p-1 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
+        >
+          <BookOpenIcon className="w-4 h-4" />
+          learn
+        </Typography>
+      </Link>
     </ul>
   );
   const shoppingCard = (

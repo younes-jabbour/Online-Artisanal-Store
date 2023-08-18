@@ -2,8 +2,9 @@ const express = require("express");
 var router = express.Router();
 const multer = require("multer");
 const { PrismaClient } = require("@prisma/client");
-const path = require("path");
+const PATH = require("path");
 const verifyJwtToken = require("../Middlewares/JwtToken");
+const fs = require("fs");
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,9 @@ const storage = multer.diskStorage({
     cb(null, "public/images/product");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const newFilename = Date.now() + PATH.extname(file.originalname);
+    cb(null, newFilename);
+    req.newFilename = newFilename;
   },
 });
 
@@ -26,16 +29,17 @@ router.post(
     const id = req.params.id;
     const { name, price, desc, categoryId } = req.body;
     const { originalname, path } = req.file;
+    newFilename = req.newFilename; //////////////////////////////////// nom de l'image
     const imagePath = path.replace(/\\/g, "/");
     const NewImagePath = imagePath.replace("public", "http://localhost:5000");
+
     try {
       const createdImage = await prisma.image.create({
         data: {
-          filename: originalname,
+          filename: newFilename,
           path: NewImagePath,
         },
       });
-      // console.log(createdImage);
       const CreateProduct = await prisma.product.create({
         data: {
           name: name,
@@ -43,13 +47,15 @@ router.post(
           desc: desc,
           categoryId: parseInt(categoryId),
           imageId: createdImage.id,
-          artisanId: parseInt(id),
+          UserId: parseInt(id),
         },
       });
 
-      res
-        .status(200)
-        .json({ message: "Product created successfully", CreateProduct });
+      res.status(200).json({
+        message: "Product created successfully",
+        CreateProduct,
+        createdImage,
+      });
     } catch (error) {
       console.error("Error creating product:", error);
       res.status(500).json({ error: "Error creating product" });
@@ -64,7 +70,7 @@ router.get("/:id", async (req, res) => {
   try {
     const products = await prisma.product.findMany({
       where: {
-        artisanId: parseInt(id),
+        UserId: parseInt(id),
       },
       include: {
         category: {
@@ -120,6 +126,13 @@ router.delete("/delete/:id", async (req, res) => {
         id: deletedProduct.imageId,
       },
     });
+    const imagePath = PATH.join(
+      __dirname,
+      "../public/images/product",
+      deletedImage.filename
+    );
+    fs.unlinkSync(imagePath); // delete image from folder
+
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -130,18 +143,31 @@ router.delete("/delete/:id", async (req, res) => {
 router.put("/update/:id", upload.single("product_img"), async (req, res) => {
   const id = req.params.id;
   const { name, price, desc, categoryId, imageId } = req.body;
-  console.log(name, price, desc, categoryId, imageId);
+  newFilename = req.newFilename; //////////////////////////////////// nom de l'image
   try {
     if (req.file) {
       const { originalname, path } = req.file;
       const imagePath = path.replace(/\\/g, "/");
       const NewImagePath = imagePath.replace("public", "http://localhost:5000");
+
+      const previousImage = await prisma.image.findFirst({
+        where: {
+          id: parseInt(imageId),
+        },
+      });
+      const Path = PATH.join(
+        __dirname,
+        "../public/images/product",
+        previousImage.filename
+      );
+      fs.unlinkSync(Path); // delete image from folder
+
       const updatedImage = await prisma.image.update({
         where: {
           id: parseInt(imageId),
         },
         data: {
-          filename: originalname,
+          filename: newFilename,
           path: NewImagePath,
         },
       });
@@ -185,12 +211,10 @@ router.put("/update/:id", upload.single("product_img"), async (req, res) => {
         },
       });
 
-      res
-        .status(200)
-        .json({
-          message: "Product updated successfully without updating image",
-          updatedProduct,
-        });
+      res.status(200).json({
+        message: "Product updated successfully without updating image",
+        updatedProduct,
+      });
     }
   } catch (error) {
     console.error("Error updating product:", error);

@@ -43,64 +43,94 @@ GenerateAccessToken = (user) => {
   }); // access token
 };
 
-// login api .
 const Login = async (req, res) => {
-  const { email, password, type } = req.body;
-  if (type === "visitor") {
-    const visitor = await prisma.user.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    if (!visitor) return res.status(404).json({ error: "Email not found" });
-    const validPassword = await bcrypt.compare(password, visitor.password);
-    if (!validPassword)
-      return res.status(400).json({ error: "invalid credentials" });
-    visitorData = {
-      id: visitor.id,
-      name: visitor.name,
-      email: visitor.email,
-      type: type,
-    };
+  const { email, password } = req.body;
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email,
+    },
+  });
+  if (!user) return res.status(404).json({ error: "Email not found" });
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword)
+    return res.status(400).json({ error: "invalid credentials" });
+  visitorData = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    type: user.role,
+  };
 
-    // generate both token and send it to client side.
-    const AccessToken = GenerateAccessToken(visitorData);
-    const RefreshToken = GenerateRefreshToken(visitorData);
-    res.cookie("JWT_RefreshToken", RefreshToken, {
-      httpOnly: true,
-      // make maxage for 1 day
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-    res.status(201).json({ AccessToken: AccessToken });
-  } else if (type === "artisan") {
-    const artisan = await prisma.artisan.findUnique({
-      where: {
-        email: email,
-      },
-    });
-    if (!artisan) return res.status(404).json({ error: "Email not found" });
-    const validPassword = await bcrypt.compare(password, artisan.password);
-    if (!validPassword) {
-      return res.status(400).json({ error: "invalid credentials" });
-    }
-    artisanData = {
-      id: artisan.id,
-      name: artisan.name,
-      email: artisan.email,
-      type: type,
-    };
-
-    // generate both token and send it to client side.
-    const AccessToken = GenerateAccessToken(artisanData);
-    const RefreshToken = GenerateRefreshToken(artisanData);
-    res.cookie("JWT_RefreshToken", RefreshToken, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.status(201).json({ AccessToken: AccessToken });
-  }
+  // generate both token and send it to client side.
+  const AccessToken = GenerateAccessToken(visitorData);
+  const RefreshToken = GenerateRefreshToken(visitorData);
+  res.cookie("JWT_RefreshToken", RefreshToken, {
+    httpOnly: true,
+    // make maxage for 1 day
+    maxAge: 24 * 60 * 60 * 1000,
+  });
+  res.status(201).json({ AccessToken: AccessToken });
 };
+
+//previous code for login users
+// login api .
+// const Login = async (req, res) => {
+//   const { email, password, type } = req.body;
+//   if (type === "visitor") {
+//     const visitor = await prisma.user.findUnique({
+//       where: {
+//         email: email,
+//       },
+//     });
+//     if (!visitor) return res.status(404).json({ error: "Email not found" });
+//     const validPassword = await bcrypt.compare(password, visitor.password);
+//     if (!validPassword)
+//       return res.status(400).json({ error: "invalid credentials" });
+//     visitorData = {
+//       id: visitor.id,
+//       name: visitor.name,
+//       email: visitor.email,
+//       type: type,
+//     };
+
+//     // generate both token and send it to client side.
+//     const AccessToken = GenerateAccessToken(visitorData);
+//     const RefreshToken = GenerateRefreshToken(visitorData);
+//     res.cookie("JWT_RefreshToken", RefreshToken, {
+//       httpOnly: true,
+//       // make maxage for 1 day
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+//     res.status(201).json({ AccessToken: AccessToken });
+//   } else if (type === "artisan") {
+//     const artisan = await prisma.artisan.findUnique({
+//       where: {
+//         email: email,
+//       },
+//     });
+//     if (!artisan) return res.status(404).json({ error: "Email not found" });
+//     const validPassword = await bcrypt.compare(password, artisan.password);
+//     if (!validPassword) {
+//       return res.status(400).json({ error: "invalid credentials" });
+//     }
+//     artisanData = {
+//       id: artisan.id,
+//       name: artisan.name,
+//       email: artisan.email,
+//       type: type,
+//     };
+
+//     // generate both token and send it to client side.
+//     const AccessToken = GenerateAccessToken(artisanData);
+//     const RefreshToken = GenerateRefreshToken(artisanData);
+//     res.cookie("JWT_RefreshToken", RefreshToken, {
+//       httpOnly: true,
+//       maxAge: 24 * 60 * 60 * 1000,
+//     });
+
+//     res.status(201).json({ AccessToken: AccessToken });
+//   }
+// };
 
 // Refresh token api.
 
@@ -115,13 +145,13 @@ const refresh_token = (req, res) => {
   const refresh_token = cookies.JWT_RefreshToken;
 
   jwt.verify(refresh_token, process.env.REFRESH_SECRET_TOKEN, (err, user) => {
-    if (err) return res.sendStatus(HTTP_STATUS.FORBIDDEN);
+    if (err) return res.sendStatus(HTTP_STATUS.UNAUTHORIZED);
 
-    // if (user.exp < Date.now() / 1000) {
-    //   return res
-    //     .status(HTTP_STATUS.FORBIDDEN)
-    //     .json({ error: ERROR_MESSAGE.REFRESH_EXPIRED });
-    // }
+    if (user.exp < Date.now() / 1000) {
+      return res
+        .status(HTTP_STATUS.UNAUTHORIZED)
+        .json({ error: ERROR_MESSAGE.REFRESH_EXPIRED });
+    }
 
     const newAccessToken = GenerateAccessToken(user);
     res.status(HTTP_STATUS.SUCCESS).json({

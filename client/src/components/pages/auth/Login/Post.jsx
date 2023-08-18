@@ -13,7 +13,7 @@ function Post() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.get("auth/post", {}).then((response) => {
+      await api.get("auth/post", ).then((response) => {
         const data = response.data;
         setData(data);
       });

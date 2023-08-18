@@ -5,7 +5,7 @@ import { Navigate, Outlet } from "react-router-dom";
 function RequireAuth() {
   const { userInfo } = useUserContext();
 
-  return userInfo.IsConnected ? <Outlet /> : <Navigate to="/login" replace={true} />;
+  return userInfo.IsConnected ? <Outlet /> : <Navigate to="/" replace={true} />;
 }
 
 export default RequireAuth;

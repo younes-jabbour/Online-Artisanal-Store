@@ -9,16 +9,17 @@ import {
   Typography,
   Radio,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [input, setInput] = useState();
   const [errorsMessage, seterrorsMessage] = useState(" ");
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
     password: "",
-    type: input,
+    role: input,
   });
   const [values, Setvalues] = useState({
     name: "",
@@ -32,7 +33,7 @@ export default function Register() {
     Setvalues({ ...values, [e.target.name]: e.target.value });
   };
   const handleChange2 = (value) => {
-    setInputs((prev) => ({ ...prev, type: value }));
+    setInputs((prev) => ({ ...prev, role: value }));
   };
 
   const handleChange = (e) => {
@@ -43,26 +44,46 @@ export default function Register() {
     e.preventDefault();
 
     const isFormValid = validateForm();
-
+    // if (isFormValid) {
+    //   try {
+    //     if (inputs.type === "Visitor") {
+    //       await axios
+    //         .post("http://localhost:5000/users/register", inputs)
+    //         .then((response) => {
+    //           // Handle successful response here
+    //           console.log("Success, Visitor created!", response.data);
+    //         });
+    //       axios.defaults.withCredentials = true;
+    //     } else if (inputs.type === "artisan") {
+    //       await axios
+    //         .post("http://localhost:5000/users/register/artisan", inputs)
+    //         .then((response) => {
+    //           // Handle successful response here
+    //           console.log("Success, artisan created!", response.data);
+    //         });
+    //       axios.defaults.withCredentials = true;
+    //     }
+    //   } catch (err) {
+    //     if (err.response && err.response.status === 409) {
+    //       seterrorsMessage("Email is already registered!");
+    //     } else {
+    //       console.log(err);
+    //     }
+    //   }
+    // }
     if (isFormValid) {
+      console.log(inputs);
       try {
-        if (inputs.type === "Visitor") {
-          await axios
-            .post("http://localhost:5000/users/register", inputs)
-            .then((response) => {
-              // Handle successful response here
-              console.log("Success, Visitor created!", response.data);
-            });
-          axios.defaults.withCredentials = true;
-        } else if (inputs.type === "artisan") {
-          await axios
-            .post("http://localhost:5000/users/register/artisan", inputs)
-            .then((response) => {
-              // Handle successful response here
-              console.log("Success, artisan created!", response.data);
-            });
-          axios.defaults.withCredentials = true;
-        }
+        await axios
+          .post("http://localhost:5000/users/register", inputs)
+          .then((response) => {
+            // Handle successful response here
+            console.log("Success, user created!");
+            setTimeout(() => {
+              navigate("/Login");
+            }, 500);
+          });
+        axios.defaults.withCredentials = true;
       } catch (err) {
         if (err.response && err.response.status === 409) {
           seterrorsMessage("Email is already registered!");
@@ -162,17 +183,17 @@ export default function Register() {
 
               <div className="flex gap-10 justify-center">
                 <Radio
-                  name="type"
+                  name="role"
                   color="brown"
-                  label="Visitor"
-                  value="Visitor"
+                  label="visitor"
+                  value="visitor"
                   ripple={false}
                   onChange={() => {
-                    handleChange2("Visitor");
+                    handleChange2("visitor");
                   }}
                 />
                 <Radio
-                  name="type"
+                  name="role"
                   color="brown"
                   label="Artisan"
                   value="Artisan"

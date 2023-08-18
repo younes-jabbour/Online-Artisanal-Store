@@ -29,6 +29,10 @@ app.use(
   express.static(path.join(__dirname, "public/images/categories"))
 );
 app.use(
+  "/images/cours",
+  express.static(path.join(__dirname, "public/images/cours"))
+);
+app.use(
   "/images",
   express.static(path.join(__dirname, "public/images/carousel"))
 );

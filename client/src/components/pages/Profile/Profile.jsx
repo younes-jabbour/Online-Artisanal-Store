@@ -22,7 +22,6 @@ import {
   ListItemSuffix,
   Chip,
 } from "@material-tailwind/react";
-import Header from "../Layout/Header";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -53,13 +52,6 @@ function Profile() {
   const [email, setEmail] = useState("");
   const [descUser, setDescUser] = useState("");
   const [imgUser, setImgUser] = useState(null);
-  const userinfo = {
-    userName,
-    email,
-    descUser,
-    imgUser,
-  };
-
   const { userInfo } = useUserContext();
 
   const [disabled, setDisabled] = useState(true);
@@ -69,7 +61,7 @@ function Profile() {
 
   //Get user info by type (artisan or client)
   const { data, loading, error } = useFetchData(
-    `http://localhost:5000/users/${type}/${id}`
+    `http://localhost:5000/users/${id}`
   );
 
   const UpdateUserInfo = async (e) => {
@@ -174,12 +166,14 @@ function Profile() {
             </ListItemSuffix>
           </ListItem>
         </Link>
-        <ListItem>
-          <ListItemPrefix>
-            <PresentationChartBarIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Dashboard
-        </ListItem>
+        <Link to="/profile/course">
+          <ListItem>
+            <ListItemPrefix>
+              <PresentationChartBarIcon className="h-5 w-5" />
+            </ListItemPrefix>
+            Dashboard of courses
+          </ListItem>
+        </Link>
         <ListItem>
           <ListItemPrefix>
             <PowerIcon className="h-5 w-5" />
@@ -201,7 +195,7 @@ function Profile() {
         andler={handleOpen}
       >
         <DialogHeader className="text-center">
-          Create your new product here 🪄
+          Create your new product here
         </DialogHeader>
         <DialogBody divider>
           <div className="flex flex-col items-center">
@@ -366,7 +360,6 @@ function Profile() {
     <>
       {userInfo.IsConnected ? (
         <>
-          <Header />
           <div className="mt-7">
             <Breadcrumbs>
               {/* <a href="1" className="opacity-60">

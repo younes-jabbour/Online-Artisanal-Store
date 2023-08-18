@@ -10,26 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  artisan
+  visitor
+}
+
 model User {
   id         Int          @id @default(autoincrement())
   name       String       @db.VarChar(20)
   email      String       @unique @db.VarChar(30)
   password   String
+  desc       String?      @default(" ") @db.LongText
+  role       Role
   ImgUrl     String?      @db.VarChar(100)
   Orders     Order[]
   Enrollment Enrollment[]
+  Product    Product[]
+  Course     Course[]
 }
 
-model Artisan {
-  id       Int       @id @default(autoincrement())
-  name     String    @db.VarChar(20)
-  password String
-  email    String    @unique @db.VarChar(30)
-  desc     String    @default(" ") @db.LongText
-  ImgUrl   String?   @db.VarChar(100)
-  Product  Product[]
-  Course   Course[]
-}
+// model Artisan {
+//   // id       Int       @id @default(autoincrement())
+//   // name     String    @db.VarChar(20)
+//   // password String
+//   // email    String    @unique @db.VarChar(30)
+//   // desc     String    @default(" ") @db.LongText
+//   // ImgUrl   String?   @db.VarChar(100)
+//   Product Product[]
+//   Course  Course[]
+// }
 
 model Category {
   id      Int       @id @default(autoincrement())
@@ -52,8 +61,8 @@ model Product {
   name       String      @db.VarChar(20)
   price      Float
   desc       String      @db.LongText
-  artisanId  Int?
-  artisan    Artisan?    @relation(fields: [artisanId], references: [id])
+  UserId     Int?
+  User       User?       @relation(fields: [UserId], references: [id])
   categoryId Int
   category   Category    @relation(fields: [categoryId], references: [id])
   imageId    Int?        @unique
@@ -65,8 +74,8 @@ model Order {
   id         Int         @id @default(autoincrement())
   date       DateTime    @db.Date
   status     STATUS
-  client     User        @relation(fields: [clientId], references: [id])
-  clientId   Int
+  User       User        @relation(fields: [UserId], references: [id])
+  UserId     Int
   OrderItems OrderItem[]
   Payment    Payment?
 }
@@ -85,9 +94,20 @@ model Course {
   id         Int          @id @default(autoincrement())
   title      String       @db.VarChar(40)
   desc       String       @db.LongText
-  artisanId  Int
-  artisan    Artisan      @relation(fields: [artisanId], references: [id])
+  UserId     Int
+  User       User         @relation(fields: [UserId], references: [id])
   Enrollment Enrollment[]
+  lesson     lesson[]
+}
+
+model lesson {
+  id       Int    @id @default(autoincrement())
+  title    String @db.VarChar(40)
+  desc     String @db.LongText
+  img      String @db.VarChar(100)
+  video    String @db.VarChar(100)  
+  courseId Int
+  Course   Course @relation(fields: [courseId], references: [id])
 }
 
 model Enrollment {

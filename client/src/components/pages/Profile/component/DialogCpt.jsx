@@ -57,7 +57,10 @@ function DialogCpt(props) {
       const response = await api.put(`/product/update/${info.index}`, formData);
       console.log(response);
       handleOpen();
-    } catch (error) {  
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
       console.log(error);
     }
   };
