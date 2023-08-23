@@ -11,6 +11,11 @@ var authRouter = require("./routes/auth");
 var imgRouter = require("./routes/img");
 var categorieRouter = require("./routes/categorie");
 var productRouter = require("./routes/product");
+var courseRouter = require("./routes/course");
+var stripeRouter = require("./routes/payment");
+
+var lessonRouter = require("./routes/lesson");
+
 require("dotenv").config();
 
 // var { expressjwt: jwt } = require("express-jwt");
@@ -47,18 +52,15 @@ app.use(
   express.static(path.join(__dirname, "public/images/users"))
 );
 
-// app.use(
-//   jwt({
-//     secret: process.env.ACCESS_SECRET_TOKEN,
-//     algorithms: ["HS256"],
-//   }).unless({
-//     path: [
-//       "/auth/login",
-//       "/users/register",
-//     ],
-//   })
-// );
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(
+  "/lesson/video",
+  express.static(path.join(__dirname, "public/images/lesson/video"))
+);
+app.use(
+  "/lesson/img",
+  express.static(path.join(__dirname, "public/images/lesson/img"))
+);
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
@@ -77,6 +79,9 @@ app.use("/auth", authRouter);
 app.use("/img", imgRouter);
 app.use("/categorie", categorieRouter);
 app.use("/product", productRouter);
+app.use("/courses", courseRouter);
+app.use("/payment", stripeRouter);
+app.use("/lesson", lessonRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

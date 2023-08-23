@@ -1,13 +1,23 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore } from '@reduxjs/toolkit';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import rootReducer from './reducers';
 
-import cartReducer from "./cartRedux";
-import userReducer from "./userSlice";
-// import productsReducer from "./productsRedux";
+const persistConfig = {
+  key: 'root',
+  storage,
+};
 
-export default configureStore({
-  reducer: {
-    cart: cartReducer,
-    user: userReducer,
-    // products: productsReducer,
-  },
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: persistedReducer,
+  // middleware: (getDefaultMiddleware) =>
+  //   getDefaultMiddleware({
+  //     serializableCheck: false, // Disable serializable check for createSlice
+  //   }),
+  // devTools: process.env.NODE_ENV !== 'production',
 });
+
+export const persistor = persistStore(store);
+export default store;

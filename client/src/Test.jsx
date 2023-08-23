@@ -1,19 +1,22 @@
-import React from "react";
-import { useUserContext } from "./context/UserContext";
+import React, { useEffect, useState } from "react";
+import api from "./components/pages/api";
+import { Button } from "@material-tailwind/react";
+
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 const Test = () => {
-  const { userInfo, logout } = useUserContext();
-  const handleClick = () => {
-    console.log(userInfo);
+  const [Course, setCourse] = useState([]);
+  console.log(Course);
+  const handleClick = async () => {
+    const response = await api.get("/courses/getCourse");
+    setCourse(response.data.courses);
   };
+
   return (
-    <div>
-      <p>id: {userInfo.id}</p>
-      <p>type: {userInfo.type}</p>
-      <button onClick={handleClick} className="bg-blue-gray-600">
-        logout
-      </button>
-    </div>
+    <>
+     <video src=""></video>
+    </>
   );
 };
 

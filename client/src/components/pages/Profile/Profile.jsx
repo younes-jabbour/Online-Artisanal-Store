@@ -36,6 +36,8 @@ import { useUserContext } from "../../../context/UserContext";
 import { Navigate, Link, Outlet } from "react-router-dom";
 import useFetchData from "../../../hooks/useFetchData";
 
+import ListProducts from "./artisan/ListProducts";
+
 function Profile() {
   const [categories, Setcategories] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -55,6 +57,7 @@ function Profile() {
   const { userInfo } = useUserContext();
 
   const [disabled, setDisabled] = useState(true);
+  const [Selected, setSelected] = useState(1);
 
   const id = userInfo.id;
   const type = userInfo.type;
@@ -137,13 +140,13 @@ function Profile() {
         </Typography>
       </div>
       <List>
-        <ListItem>
+        <ListItem Selected={Selected === 1} onClick={() => setSelected(1)}>
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
           Profile
         </ListItem>
-        <ListItem className=" ">
+        <ListItem selected={Selected === 3} onClick={() => setSelected(3)}>
           <ListItemPrefix>
             <ShoppingBagIcon className="h-5 w-5" />
           </ListItemPrefix>
@@ -174,9 +177,9 @@ function Profile() {
             Dashboard of courses
           </ListItem>
         </Link>
-        <ListItem>
+        <ListItem className="text-red-800">
           <ListItemPrefix>
-            <PowerIcon className="h-5 w-5" />
+            <PowerIcon className="h-5 w-5 " />
           </ListItemPrefix>
           Log Out
         </ListItem>
@@ -375,7 +378,7 @@ function Profile() {
             <div className=" h-fit grid grid-cols-[300px_1fr]">
               <div>{side_bar}</div>
               {Dialog_cpt}
-              {inputs}
+              {Selected === 1 && inputs}
             </div>
           ) : (
             <>{inputs}</>

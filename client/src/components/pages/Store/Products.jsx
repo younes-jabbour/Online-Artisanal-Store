@@ -22,8 +22,9 @@ import img_5 from "../../../assets/categories/wicker.jpeg";
 import img_6 from "../../../assets/categories/wood.jpeg";
 
 import useFetchData from "../../../hooks/useFetchData";
+import { useDispatch, useSelector } from "react-redux";
+
 import { addProduct } from "../../../redux/cartRedux";
-import { useDispatch } from "react-redux";
 
 function Products() {
   const [ImgUrl, setImgUrl] = useState([]);
@@ -38,10 +39,6 @@ function Products() {
   const [Quantity, setQuantity] = useState(0);
 
   const dispatch = useDispatch();
-  const handleClick = () => {
-    setQuantity(Quantity + 1);
-    dispatch(addProduct({ quantity: Quantity }));
-  };
 
   useEffect(() => {
     const filtered = Products.filter((product) => {
@@ -135,6 +132,14 @@ function Products() {
   );
 
   const CardProduct = (props) => {
+    const { id, image, name, price } = props;
+
+    const product = { id, image, name, price };
+
+    const handleClick = () => {
+      dispatch(addProduct(product));
+    };
+
     return (
       <Card className="w-96">
         <CardHeader shadow={false} floated={false} className="h-72">
@@ -204,6 +209,7 @@ function Products() {
       </Card>
     );
   };
+  
   const HeroSection = (
     <div className="bg-BrownLight h-32 flex items-center justify-center border-b-[2px] border-solid border-BrownDark">
       <Typography variant="h2" className="text-BrownDark">
@@ -289,8 +295,8 @@ function Products() {
         ) : (
           filteredProducts.map((product) => (
             <CardProduct
-              key={product.id}
-              image={product.image.path}
+              id={product.id}
+              image={product.image ? product.image.path : ""}
               desc={product.desc}
               price={product.price}
               name={product.name}

@@ -22,6 +22,9 @@ import ListProducts from "./components/pages/Profile/artisan/ListProducts";
 import Anauthorized from "./components/pages/Errors/Anauthorized";
 import LandingPage from "./components/learning/LandingPage";
 import Dashboard from "./components/learning/artisan/Dashboard";
+import SinglePageCourse from "./components/learning/artisan/SinglePageCourse";
+import Success from "./components/payment/Success";
+import Concel from "./components/payment/Concel";
 
 function App() {
   const customTheme = {
@@ -80,21 +83,24 @@ function App() {
                   path="/profile/list_of_products"
                   element={<ListProducts />}
                 />
-                  <Route
-                  path="/profile/course"
-                  element={<Dashboard />}
-                />
               </Route>
               {/* public routes */}
               <Route path="/products" element={<Products />} />
               <Route path="/learn" element={<LandingPage />} />
             </Route>
             {/* without layout */}
+            <Route path="/profile/course" element={<Dashboard />} />
+            <Route
+              path="/profile/course/lessons"
+              element={<SinglePageCourse />}
+            />
             <Route path="/post" element={<Post />} />
             <Route path="/test" element={<Test />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/anauthorized" element={<Anauthorized />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/cancel" element={<Concel />} />
             <Route path="*" element={<Missing />} />
           </Routes>
         </UserProvider>

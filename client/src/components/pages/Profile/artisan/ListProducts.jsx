@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../../Layout/Header";
 import api from "../../api";
 import { useUserContext } from "../../../../context/UserContext";
+
 import {
   Card,
   Typography,
@@ -23,20 +24,21 @@ const TABLE_HEAD = ["image", "name", "price", "category", "edit", "delete"];
 function ListProducts() {
   const { userInfo } = useUserContext();
   const id = userInfo.id;
+  console.log(userInfo);
   const [isLoading, setIsLoading] = React.useState(false);
   const [tableRows, setTableRows] = useState([]);
   const [Mounted, setMounted] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [info, setInfo] = useState({});
   const [idDeletedProduct, setidDeletedProduct] = useState();
-  console.log(idDeletedProduct);
   const handleOpen = () => setOpen(!open);
-
   //Attention Drawer
   const [openAttentionDrawer, setOpenAttentionDrawer] = React.useState(false);
 
   const handleOpenAttentionDrawer = () =>
     setOpenAttentionDrawer(!openAttentionDrawer);
+
+  console.log(tableRows);
 
   useEffect(() => {
     const handleClick = async () => {

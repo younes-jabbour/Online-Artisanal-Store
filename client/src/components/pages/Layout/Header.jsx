@@ -147,12 +147,12 @@ function Header() {
         </IconButton>
       </MenuHandler>
       <MenuList>
-        <MenuItem className=" flex items-center gap-1">
-          <UserCircleIcon className="h-5 w-5" />
-          <Link to="/profile">
+        <Link to="/profile">
+          <MenuItem className=" flex items-center gap-1">
+            <UserCircleIcon className="h-5 w-5" />
             <span>My Profile</span>
-          </Link>
-        </MenuItem>
+          </MenuItem>
+        </Link>
         <MenuItem
           onClick={logout}
           className=" text-red-800 flex items-center gap-1"

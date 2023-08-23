@@ -29,21 +29,11 @@ model User {
   Course     Course[]
 }
 
-// model Artisan {
-//   // id       Int       @id @default(autoincrement())
-//   // name     String    @db.VarChar(20)
-//   // password String
-//   // email    String    @unique @db.VarChar(30)
-//   // desc     String    @default(" ") @db.LongText
-//   // ImgUrl   String?   @db.VarChar(100)
-//   Product Product[]
-//   Course  Course[]
-// }
-
 model Category {
   id      Int       @id @default(autoincrement())
   name    String    @db.VarChar(20)
   Product Product[]
+  Course  Course[]
 }
 
 model Image {
@@ -52,8 +42,26 @@ model Image {
   path      String
   productId Int?
   Product   Product?
+  Course    Course?
+  CourseId  Int?
 
   @@unique([id, productId])
+  @@unique([id, CourseId])
+}
+
+model Course {
+  id         Int          @id @default(autoincrement())
+  title      String       @db.VarChar(40)
+  desc       String?      @db.LongText
+  published  Boolean      @default(false)
+  Enrollment Enrollment[]
+  lesson     Lesson[]
+  imageId    Int?         @unique
+  image      Image?       @relation(fields: [imageId], references: [id])
+  UserId     Int
+  User       User         @relation(fields: [UserId], references: [id])
+  categoryId Int
+  category   Category     @relation(fields: [categoryId], references: [id])
 }
 
 model Product {
@@ -90,24 +98,30 @@ model OrderItem {
   order       Order   @relation(fields: [orderId], references: [id])
 }
 
-model Course {
-  id         Int          @id @default(autoincrement())
-  title      String       @db.VarChar(40)
-  desc       String       @db.LongText
-  UserId     Int
-  User       User         @relation(fields: [UserId], references: [id])
-  Enrollment Enrollment[]
-  lesson     lesson[]
+model Lesson {
+  id          Int           @id @default(autoincrement())
+  title       String
+  desc        String
+  courseId    Int
+  Course      Course        @relation(fields: [courseId], references: [id])
+  LessonImage LessonImage[]
+  LessonVideo LessonVideo[]
 }
 
-model lesson {
+model LessonVideo {
   id       Int    @id @default(autoincrement())
-  title    String @db.VarChar(40)
-  desc     String @db.LongText
-  img      String @db.VarChar(100)
-  video    String @db.VarChar(100)  
-  courseId Int
-  Course   Course @relation(fields: [courseId], references: [id])
+  filename String
+  path     String
+  lessonId Int
+  Lesson   Lesson @relation(fields: [lessonId], references: [id])
+}
+
+model LessonImage {
+  id       Int    @id @default(autoincrement())
+  filename String
+  path     String
+  lessonId Int
+  Lesson   Lesson @relation(fields: [lessonId], references: [id])
 }
 
 model Enrollment {
