@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `lesson` MODIFY `desc` LONGTEXT NULL,
+    MODIFY `img` VARCHAR(100) NULL,
+    MODIFY `video` VARCHAR(100) NULL;
