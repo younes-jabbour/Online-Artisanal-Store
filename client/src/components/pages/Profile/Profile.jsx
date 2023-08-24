@@ -38,6 +38,7 @@ import useFetchData from "../../../hooks/useFetchData";
 
 import ListProducts from "./artisan/ListProducts";
 
+
 function Profile() {
   const [categories, Setcategories] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -159,13 +160,6 @@ function Profile() {
             </ListItemPrefix>
             List of Products
             <ListItemSuffix>
-              <Chip
-                value="14"
-                size="sm"
-                variant="ghost"
-                color="blue-gray"
-                className="rounded-full"
-              />
             </ListItemSuffix>
           </ListItem>
         </Link>

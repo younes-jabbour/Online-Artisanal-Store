@@ -16,6 +16,30 @@ import api from "../../pages/api";
 import axios from "axios";
 
 function LessonForm(props) {
+
+  var toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    [{ direction: "rtl" }], // text direction
+
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+    const modules =  {
+      toolbar: toolbarOptions,
+    };
+
   const [Text, setText] = useState(""); // for description
   const [Title, setTitle] = useState("");
 
@@ -125,7 +149,7 @@ function LessonForm(props) {
             >
               Text of lesson
             </Typography>
-            <ReactQuill theme="snow" value={Text} onChange={setText} />
+            <ReactQuill modules={modules} theme="snow" value={Text} onChange={setText} />
           </div>
 
           <div className="my-1">

@@ -24,7 +24,7 @@ const TABLE_HEAD = ["image", "name", "price", "category", "edit", "delete"];
 function ListProducts() {
   const { userInfo } = useUserContext();
   const id = userInfo.id;
-  console.log(userInfo);
+  const [NumberProducts, setNumberProducts] = useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
   const [tableRows, setTableRows] = useState([]);
   const [Mounted, setMounted] = React.useState(false);
@@ -35,10 +35,10 @@ function ListProducts() {
   //Attention Drawer
   const [openAttentionDrawer, setOpenAttentionDrawer] = React.useState(false);
 
+
+
   const handleOpenAttentionDrawer = () =>
     setOpenAttentionDrawer(!openAttentionDrawer);
-
-  console.log(tableRows);
 
   useEffect(() => {
     const handleClick = async () => {
@@ -57,6 +57,7 @@ function ListProducts() {
           };
         });
         setTableRows(table_info);
+        setNumberProducts(products.length);
         setIsLoading(true);
         setMounted(true);
       } catch (error) {

@@ -1,21 +1,16 @@
 import React, { useEffect, useState } from "react";
 import api from "./components/pages/api";
-import { Button } from "@material-tailwind/react";
-
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.bubble.css";
+import { Button, Input } from "@material-tailwind/react";
 
 const Test = () => {
-  const [Course, setCourse] = useState([]);
+  const [Course, setCourse] = useState("");
   console.log(Course);
-  const handleClick = async () => {
-    const response = await api.get("/courses/getCourse");
-    setCourse(response.data.courses);
-  };
 
   return (
     <>
-     <video src=""></video>
+      <div className="w-72">
+        <Input value={Course} onChange={(e)=>setCourse(e.target.value)} label="Username" />
+      </div>
     </>
   );
 };

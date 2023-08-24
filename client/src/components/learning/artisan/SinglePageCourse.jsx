@@ -9,15 +9,212 @@ import {
   ListItemSuffix,
   Chip,
   Breadcrumbs,
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
+  Button,
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+  Avatar,
+  IconButton,
 } from "@material-tailwind/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 import { Link } from "react-router-dom";
 import LessonForm from "./LessonForm";
+import api from "../../pages/api";
+import Quiz from "./quiz/Quiz";
 
 function SinglePageCourse() {
+  var toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ script: "sub" }, { script: "super" }], // superscript/subscript
+    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
+    [{ direction: "rtl" }], // text direction
+
+    [{ size: ["small", false, "large", "huge"] }], // custom dropdown
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+  const modules = {
+    toolbar: toolbarOptions,
+  };
+
+  const [open, setOpen] = React.useState();
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleOpenImage = (imagePath) => {
+    setSelectedImage(imagePath);
+  };
+
+  const handleOpen = (value) => setOpen(open === value ? 0 : value);
   const { id, course } = useSelector((state) => state.course);
   const [Selected, setSelected] = useState(1);
+  const [Mounted, setMounted] = useState(false);
+  const [Lessons, setLessons] = useState([]);
+
+  useEffect(() => {
+    const FetchLessons = async () => {
+      setMounted(true);
+
+      await api.get(`/lesson/GetLessons/${id}`).then((res) => {
+        setLessons(res.data);
+        console.log(res.data);
+      });
+    };
+    FetchLessons();
+    return () => {
+      setMounted(false);
+    };
+  }, [Mounted, id]);
+
+  function Icon({ id, open }) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={2}
+        stroke="currentColor"
+        className={`${
+          id === open ? "rotate-180" : ""
+        } h-5 w-5 transition-transform`}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+        />
+      </svg>
+    );
+  }
+
+  const CUSTOM_ANIMATION = {
+    mount: { scale: 1 },
+    unmount: { scale: 1 },
+    // transition: {
+    //   type: "spring",
+    //   damping: 20,
+    //   stiffness: 100,
+    // },
+
+    // //make it slow
+    // duration: 0.5,
+  };
+
+  const DefaultAccordion = (
+    <div>
+      {Lessons &&
+        Lessons.map((lesson) => (
+          <div key={lesson.id}>
+            <Accordion
+              open={open === lesson.id}
+              icon={<Icon id={lesson.id} open={open} />}
+              className="mb-2 rounded-lg border border-blue-gray-100 px-4 duration-75"
+              animate={CUSTOM_ANIMATION}
+            >
+              <AccordionHeader
+                onClick={() => handleOpen(lesson.id)}
+                className={`border-b-0 transition-colors ${
+                  open === lesson.id ? "text-blue-500 hover:!text-blue-700" : ""
+                }`}
+              >
+                {lesson.title}
+              </AccordionHeader>
+              <AccordionBody className="pt-0 text-base font-normal">
+                <ReactQuill
+                  modules={modules}
+                  value={lesson.desc}
+                  readOnly={true}
+                  theme={"bubble"}
+                />
+
+                {lesson.LessonImage && lesson.LessonImage.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <Typography
+                      variant="small"
+                      className="font-bold text-gray-600 border-b-[2px] border-solid w-fit border-gray-500"
+                    >
+                      Lesson Images
+                    </Typography>
+                    <div className="flex flex-row gap-3">
+                      {lesson.LessonImage.map((image) => (
+                        <>
+                          <Card
+                            className="cursor-pointer overflow-hidden transition-opacity hover:opacity-90"
+                            onClick={() => handleOpenImage(image.path)}
+                          >
+                            <div className="w-52 h-52">
+                              <img
+                                src={image.path}
+                                className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/70  "
+                                alt="CourseImage"
+                              />
+                            </div>
+                          </Card>
+                        </>
+                      ))}
+                      {selectedImage && (
+                        <Dialog
+                          size="lg"
+                          animate={{
+                            mount: { scale: 1, y: 0 },
+                            unmount: { scale: 0.9, y: -100 },
+                          }}
+                          open={Boolean(selectedImage)}
+                          handler={() => setSelectedImage(null)}
+                        >
+                          <DialogBody divider={false} className="p-0">
+                            <img
+                              alt="nature"
+                              className="h-full w-full object-cover object-center"
+                              src={selectedImage}
+                            />
+                          </DialogBody>
+                        </Dialog>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {lesson.LessonVideo && lesson.LessonVideo.length > 0 && (
+                  <div className="flex flex-col gap-2 mt-5">
+                    <Typography
+                      variant="small"
+                      className="font-bold text-gray-600 border-b-[2px] border-solid w-fit border-gray-500"
+                    >
+                      Lesson Videos
+                    </Typography>
+                    <div className="flex flex-row gap-3">
+                      {lesson.LessonVideo.map((video) => (
+                        <div className="w-52 h-52">
+                          <video
+                            src={video.path}
+                            className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/10  "
+                            alt="CourseImage"
+                            controls
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </AccordionBody>
+            </Accordion>
+          </div>
+        ))}
+    </div>
+  );
 
   const BreadcrumbsCpt = (
     <Breadcrumbs className="my-5">
@@ -41,8 +238,7 @@ function SinglePageCourse() {
         >
           <ListItemPrefix>{/* icons here */}</ListItemPrefix>
           Course
-          <ListItemSuffix>
-          </ListItemSuffix>
+          <ListItemSuffix></ListItemSuffix>
         </ListItem>
         <ListItem
           ripple={false}
@@ -53,21 +249,23 @@ function SinglePageCourse() {
           <ListItemPrefix></ListItemPrefix>
           <span>Create new lesson</span>
         </ListItem>
+        <ListItem
+          ripple={false}
+          selected={Selected === 3}
+          onClick={() => setSelected(3)}
+        >
+          <ListItemPrefix>{/* icons here */}</ListItemPrefix>
+          Create Quiz
+          <ListItemSuffix></ListItemSuffix>
+        </ListItem>
       </List>
     </Card>
   );
 
   const Course = (
-    <div className=" flex flex-col border-2 border-solid border-black gap-4">
-      <div className=" flex flex-row gap-2 border-2 border-solid border-red-400">
-        <div className="w-96 h-52">
-          <img
-            src={course.image.path}
-            className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/10  "
-            alt="CourseImage"
-          />
-        </div>
-        <div className="m-5 place-self-center self-center">
+    <div className=" mx-5 w-full h-full flex flex-col border-2 border-solid border-black gap-4">
+      <div className=" flex flex-row gap-7 border-2 border-solid border-red-400">
+        <div className="mx-5 self-end justify-self-end">
           <Typography variant="h2" className="capitalize mb-1">
             {course.title}
           </Typography>
@@ -75,6 +273,13 @@ function SinglePageCourse() {
             variant="ghost"
             className="mb-[3.5rem]  w-fit font-extrabold capitalize"
             value={course.category.name}
+          />
+        </div>
+        <div className="w-96 m-auto h-52">
+          <img
+            src={course.image.path}
+            className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/10  "
+            alt="CourseImage"
           />
         </div>
       </div>
@@ -85,6 +290,7 @@ function SinglePageCourse() {
         Course Description
       </Typography>
       <ReactQuill value={course.desc} readOnly={true} theme={"bubble"} />
+      {DefaultAccordion}
     </div>
   );
 
@@ -95,6 +301,7 @@ function SinglePageCourse() {
         {side_bar}
         {Selected === 1 && Course}
         {Selected === 2 && <LessonForm CourseId={id} />}
+        {Selected === 3 && <Quiz courseId = {id} />}
       </div>
     </>
   );

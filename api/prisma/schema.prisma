@@ -62,7 +62,48 @@ model Course {
   User       User         @relation(fields: [UserId], references: [id])
   categoryId Int
   category   Category     @relation(fields: [categoryId], references: [id])
+  quiz       Quiz?
 }
+
+model Quiz {
+  id       Int        @id @default(autoincrement())
+  title    String
+  courseId Int        @unique
+  Course   Course     @relation(fields: [courseId], references: [id])
+  Questions Question[]
+}
+
+// model Question {
+//   id              Int      @id @default(autoincrement())
+//   text            String   @db.MediumText
+//   options         Option[]
+//   correctOptionId Int? // Reference to the correct option's ID
+//   quizId          Int // Reference to the associated quiz's ID
+//   quiz            Quiz     @relation(fields: [quizId], references: [id])
+// }
+
+// model Option {
+//   id         Int      @id @default(autoincrement())
+//   text       String   @db.MediumText
+//   questionId Int // Reference to the associated question's ID
+//   question   Question @relation(fields: [questionId], references: [id])
+// }
+model Question {
+  id              Int      @id @default(autoincrement())
+  text            String   @db.MediumText
+  options         Option[]
+  quizId          Int // Reference to the associated quiz's ID
+  quiz            Quiz     @relation(fields: [quizId], references: [id])
+}
+
+model Option {
+  id         Int      @id @default(autoincrement())
+  text       String   @db.MediumText
+  IsCorrect  Boolean @default(false)
+  questionId Int // Reference to the associated question's ID
+  question   Question @relation(fields: [questionId], references: [id])
+}
+
 
 model Product {
   id         Int         @id @default(autoincrement())
@@ -101,7 +142,7 @@ model OrderItem {
 model Lesson {
   id          Int           @id @default(autoincrement())
   title       String
-  desc        String
+  desc        String        @db.LongText
   courseId    Int
   Course      Course        @relation(fields: [courseId], references: [id])
   LessonImage LessonImage[]

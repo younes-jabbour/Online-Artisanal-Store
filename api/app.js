@@ -16,6 +16,8 @@ var stripeRouter = require("./routes/payment");
 
 var lessonRouter = require("./routes/lesson");
 
+var quizRouter = require("./routes/quiz");
+
 require("dotenv").config();
 
 // var { expressjwt: jwt } = require("express-jwt");
@@ -82,6 +84,7 @@ app.use("/product", productRouter);
 app.use("/courses", courseRouter);
 app.use("/payment", stripeRouter);
 app.use("/lesson", lessonRouter);
+app.use("/quiz", quizRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

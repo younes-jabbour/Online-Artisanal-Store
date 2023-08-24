@@ -95,34 +95,28 @@ function Header() {
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-3 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-16">
       <Link to="/">
-        <Typography
-          as="li"
-          color="blue-gray"
-          className="p-1 flex gap-1 items-center cursor-pointer lg:text-base font-bold hover:text-blue-700"
+        <span          
+          className="p-1 text-gray-800 flex gap-1 items-center font-bold cursor-pointer hover:text-blue-700"
         >
           <HomeIcon className="h-4 w-4 to-black" />
           home
-        </Typography>
+        </span>
       </Link>
       <Link to="/products">
-        <Typography
-          as="li"
-          color="blue-gray"
-          className="p-1 flex items-center cursor-pointer gap-1 font-bold lg:text-base  hover:text-blue-700"
+        <span          
+          className="p-1 text-gray-800 flex items-center cursor-pointer gap-1 font-bold lg:text-base  hover:text-blue-700"
         >
           <ShoppingBagIcon className="w-4 h-4" />
           product
-        </Typography>
+        </span>
       </Link>
       <Link to="/learn">
-        <Typography
-          as="li"
-          color="blue-gray"
-          className="p-1 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
+        <span          
+          className="p-1 text-gray-800 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
         >
           <BookOpenIcon className="w-4 h-4" />
           learn
-        </Typography>
+        </span>
       </Link>
     </ul>
   );

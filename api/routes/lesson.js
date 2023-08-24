@@ -26,6 +26,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// Create a new lesson for a specific course
 router.post(
   "/NewLesson/:id",
   upload.fields([{ name: "images" }, { name: "videos" }]),
@@ -70,7 +71,7 @@ router.post(
       const lesson = await prisma.Lesson.create({
         data: {
           title: title,
-          desc : text,
+          desc: text,
           courseId,
         },
       });
@@ -104,5 +105,39 @@ router.post(
     }
   }
 );
+
+// Get all lessons for a specific course
+
+router.get("/GetLessons/:id", async (req, res) => {
+  const { id } = req.params;
+  const courseId = parseInt(id);
+
+  try {
+    const lessons = await prisma.lesson.findMany({
+      where: {
+        courseId: courseId,
+      },
+      include: {
+        LessonImage: {
+          select: {
+            filename: true,
+            path: true,
+          },
+        },
+        LessonVideo: {
+          select: {
+            filename: true,
+            path: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(lessons); // Send the lessons data as JSON response
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error.");
+  }
+});
 
 module.exports = router;
