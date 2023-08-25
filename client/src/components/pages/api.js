@@ -17,6 +17,10 @@ const ERROR_MESSAGE = {
   REFRESH_EXPIRED: "Refresh token has expired",
 };
 
+const apiPublic = axios.create({
+  baseURL: BASE_URL,
+});
+
 const api = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
@@ -68,6 +72,8 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export { apiPublic };
 
 // api.interceptors.request.use(
 //   async (config) => {

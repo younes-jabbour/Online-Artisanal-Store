@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardHeader,
@@ -18,6 +18,9 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourseData } from "../../../redux/Courselice";
 
+import api from "../../pages/api";
+import axios from "axios";
+
 function CourseCard(props) {
   const { id, course } = props;
   const dispatch = useDispatch();
@@ -26,14 +29,31 @@ function CourseCard(props) {
     dispatch(setCourseData({ id, course }));
   };
 
-  const [Changed, setChanged] = useState(false);
-  // const [showLesson, setShowLesson] = useState(false);
+  const [Changed, setChanged] = useState(course.published);
+  useEffect(() => {
+    const published = async () => {
+      try {
+        await axios
+          .put(`http://localhost:5000/courses/publish/${id}`, {
+            Changed,
+          })
+          .then((res) => {
+            if (res.status === 200) {
+              console.log("published", res.data);
+            }
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    published();
+  }, [Changed]);
   return (
     <>
       <Card className="mt-6 w-[24rem] border-solid border-[1px] border-gray-500/20">
         <CardHeader color="blue-gray" className=" h-48">
           <img
-            src={course.image?.path }
+            src={course.image?.path}
             alt="card"
             className="h-full w-full object-cover"
           />
@@ -45,7 +65,19 @@ function CourseCard(props) {
           <Chip
             variant="ghost"
             className="w-fit"
-            color="green"
+            color={
+              course.category.name === "Wicker"
+                ? "green"
+                : course.category.name === "leather"
+                ? "orange"
+                : course.category.name === "The dinaderie"
+                ? "red"
+                : course.category.name === "carpets"
+                ? "orange"
+                : course.category.name === "Ceramics and pottery"
+                ? "purple"
+                : "gray"
+            }
             value={course.category.name}
           />
         </CardBody>
@@ -65,12 +97,14 @@ function CourseCard(props) {
           <div className="flex justify-center ">
             <Switch
               ripple={false}
+              className="mr-3"
               color="green"
               onChange={() => setChanged(!Changed)}
+              defaultChecked={Changed}
             />
             <div className="flex items-center gap-1">
               <div className="flex items-center gap-1">
-                {!course.published ? (
+                {!Changed ? (
                   <>
                     <ExclamationTriangleIcon className="h-5 w-5 font-bold text-yellow-600 ml-1" />
                     <Typography
@@ -83,7 +117,7 @@ function CourseCard(props) {
                   </>
                 ) : (
                   <>
-                    <CheckCircleIcon className="h-5 w-5 font-bold text-[#2ec946] ml-2" />
+                    <CheckCircleIcon className="h-5 w-5 font-bold text-[#2ec946] ml-1" />
                     <Typography
                       variant="small"
                       className="font-bold text-[#2ec946]"

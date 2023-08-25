@@ -25,6 +25,7 @@ import Dashboard from "./components/learning/artisan/Dashboard";
 import SinglePageCourse from "./components/learning/artisan/SinglePageCourse";
 import Success from "./components/payment/Success";
 import Concel from "./components/payment/Concel";
+import Courses from "./components/learning/Courses";
 
 function App() {
   const customTheme = {
@@ -101,6 +102,7 @@ function App() {
             <Route path="/anauthorized" element={<Anauthorized />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Concel />} />
+            <Route path="/Courses" element={<Courses />} />
             <Route path="*" element={<Missing />} />
           </Routes>
         </UserProvider>

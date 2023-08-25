@@ -224,7 +224,7 @@ function Products() {
         variant="h4"
         className=" pt-11 mx-4 pb-2 mb-12 bordere-2 text-BrownDark border-b-[1px] border-solid border-BrownDark"
       >
-        All Products is available Here.
+        All Products are available Here.
       </Typography>
       {/* filter */}
       <div className="flex justify-between mx-4 mb-10">

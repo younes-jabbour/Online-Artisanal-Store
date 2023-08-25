@@ -38,7 +38,6 @@ import useFetchData from "../../../hooks/useFetchData";
 
 import ListProducts from "./artisan/ListProducts";
 
-
 function Profile() {
   const [categories, Setcategories] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -159,8 +158,7 @@ function Profile() {
               <InboxIcon className="h-5 w-5" />
             </ListItemPrefix>
             List of Products
-            <ListItemSuffix>
-            </ListItemSuffix>
+            <ListItemSuffix></ListItemSuffix>
           </ListItem>
         </Link>
         <Link to="/profile/course">
@@ -299,7 +297,22 @@ function Profile() {
             type={visible ? "text" : "password"}
             id="input"
             disabled={disabled}
-            label="password"
+            label="old password"
+            icon={
+              visible ? (
+                <EyeSlashIcon onClick={handlEyeClick} />
+              ) : (
+                <EyeIcon onClick={handlEyeClick} />
+              )
+            }
+          />
+          <Input
+            size="md"
+            variant="outlined"
+            type={visible ? "text" : "password"}
+            id="input"
+            disabled={disabled}
+            label="new password"
             icon={
               visible ? (
                 <EyeSlashIcon onClick={handlEyeClick} />

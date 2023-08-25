@@ -93,53 +93,7 @@ const GetUserById = async (req, res) => {
 // update user
 
 const UpdateUser = async (req, res) => {
-  console.log(req.body);
-  // const id = parseInt(req.params.id);
-  // const type = req.params.type;
-  // const { name, email, password } = req.body;
-  // if (type === "visitor") {
-  //   const user = await prisma.user.findUnique({
-  //     where: { id: id },
-  //   });
-  //   if (!user) return res.status(404).json({ error: "User not found" });
-  //   const salt = await bcrypt.genSalt(10);
-  //   const hashpassword = await bcrypt.hash(password, salt);
-  //   try {
-  //     const updatedUser = await prisma.user.update({
-  //       where: { id: id },
-  //       data: {
-  //         name: name,
-  //         email: email,
-  //         password: hashpassword,
-  //       },
-  //     });
-  //     res.status(200).json(updatedUser);
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Internal server error" });
-  //   }
-  // } else if (type === "artisan") {
-  //   const artisan = await prisma.artisan.findUnique({
-  //     where: { id: id },
-  //   });
-  //   if (!artisan) return res.status(404).json({ error: "Artisan not found" });
-  //   const salt = await bcrypt.genSalt(10);
-  //   const hashpassword = await bcrypt.hash(password, salt);
-  //   try {
-  //     const updatedArtisan = await prisma.artisan.update({
-  //       where: { id: id },
-  //       data: {
-  //         name: name,
-  //         email: email,
-  //         password: hashpassword,
-  //       },
-  //     });
-  //     res.status(200).json(updatedArtisan);
-  //   } catch (error) {
-  //     console.error(error);
-  //     res.status(500).json({ error: "Internal server error" });
-  //   }
-  // }
+
 };
 
 module.exports = { CreateUser, GetUserById, UpdateUser };

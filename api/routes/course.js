@@ -61,7 +61,28 @@ router.post("/newCourse", upload.single("thumbnail"), async (req, res) => {
 
 router.get("/getCourse", async (req, res) => {
   try {
-    const courses = await prisma.course.findMany();
+    const courses = await prisma.course.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        image: {
+          select: {
+            path: true,
+          },
+        },
+        User: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
     res.status(200).json({
       message: "Courses fetched successfully",
       courses,
@@ -108,5 +129,29 @@ router.get("/getCourse/:id", async (req, res) => {
   }
 });
 
+router.put("/publish/:id", async (req, res) => {
+  const { id } = req.params;
+  const { Changed } = req.body;
+  try {
+    const course = await prisma.course.update({
+      where: {
+        id: parseInt(id),
+      },
+      data: {
+        published: Changed,
+      },
+    });
+    res.status(200).json({
+      message: "Course published successfully",
+      course,
+    });
+  } catch (error) {
+    console.error("Error publishing course:", error);
+    res.status(500).json({
+      message: "Error publishing course",
+      error,
+    });
+  }
+});
 
 module.exports = router;

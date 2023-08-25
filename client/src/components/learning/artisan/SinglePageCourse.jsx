@@ -19,6 +19,8 @@ import {
   DialogFooter,
   Avatar,
   IconButton,
+  Radio,
+  chip,
 } from "@material-tailwind/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
@@ -26,6 +28,7 @@ import { Link } from "react-router-dom";
 import LessonForm from "./LessonForm";
 import api from "../../pages/api";
 import Quiz from "./quiz/Quiz";
+import { CheckCircleIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
 
 function SinglePageCourse() {
   var toolbarOptions = [
@@ -52,30 +55,48 @@ function SinglePageCourse() {
   };
 
   const [open, setOpen] = React.useState();
+  const [openQuiz, setOpenQuiz] = React.useState();
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleOpenImage = (imagePath) => {
     setSelectedImage(imagePath);
   };
 
+  const handleOpenQuiz = (value) => setOpenQuiz(openQuiz === value ? 0 : value);
+
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
   const { id, course } = useSelector((state) => state.course);
   const [Selected, setSelected] = useState(1);
   const [Mounted, setMounted] = useState(false);
   const [Lessons, setLessons] = useState([]);
-
+  const [QuizFetch, setQuiz] = useState({});
+  console.log({ Quiz: Quiz });
   useEffect(() => {
     const FetchLessons = async () => {
       setMounted(true);
 
       await api.get(`/lesson/GetLessons/${id}`).then((res) => {
         setLessons(res.data);
-        console.log(res.data);
       });
     };
     FetchLessons();
     return () => {
       setMounted(false);
+    };
+  }, [Mounted, id]);
+
+  useEffect(() => {
+    const FetchQuiz = async () => {
+      setMounted(true);
+
+      await api.get(`/quiz/GetQuiz/${id}`).then((res) => {
+        setQuiz(res.data);
+      });
+    };
+    FetchQuiz();
+    return () => {
+      setMounted(false);
+      setQuiz([]);
     };
   }, [Mounted, id]);
 
@@ -262,9 +283,79 @@ function SinglePageCourse() {
     </Card>
   );
 
+  const QuizCpt = (
+    <Accordion
+      open={openQuiz === 1}
+      icon={<Icon id={1} open={openQuiz} />}
+      className="mb-2 rounded-lg border border-blue-gray-100 px-4"
+    >
+      <AccordionHeader
+        onClick={() => handleOpenQuiz(1)}
+        className={`border-b-0 transition-colors ${
+          openQuiz === 1 ? "text-blue-500 hover:!text-blue-700" : ""
+        }`}
+      >
+        {QuizFetch && QuizFetch.title}
+      </AccordionHeader>
+      <AccordionBody className="pt-0 text-base font-normal">
+        {QuizFetch &&
+          QuizFetch.Questions &&
+          QuizFetch.Questions.length > 0 &&
+          QuizFetch.Questions.map((question, index) => (
+            <div className="mt-10 mx-3">
+              <Chip
+                variant="ghost"
+                color="blue"
+                className="rounded-lg w-fit mb-5"
+                value={`Question number` + ` ` + `${index + 1}`}
+              />
+              <span className="ml-2">{question.text}</span>
+              <div className="flex flex-col mt-5 gap-1">
+                {question.options.map((option, index) => (
+                  <div className="flex flex-row gap-2 items-center">
+                    <input
+                      type="checkbox"
+                      checked={option.IsCorrect}
+                      id={option.id}
+                      value={option.id}
+                    />
+                    {option.IsCorrect ? (
+                      <Chip
+                        value={
+                          <div className="flex flex-row gap-2 items-center">
+                            <CheckBadgeIcon className="h-4 w-4 m-0 p-0" />
+                            <label
+                              className="text-sm lowercase m-0 p-0"
+                              for={option.id}
+                            >
+                              {option.text}
+                            </label>
+                          </div>
+                        }
+                        variant="ghost"
+                        color="green"
+                        className="ml-5 w-fit lowercase text-sm"
+                      />
+                    ) : (
+                      <label className="ml-5 text-sm lowercase" for={option.id}>
+                        {option.text}
+                      </label>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        {/* <div className="mt-10 flex justify-center ">
+          <Button variant="gradient" className="hover:shadow-none">Confirm your reponse</Button>
+        </div> */}
+      </AccordionBody>
+    </Accordion>
+  );
+
   const Course = (
-    <div className=" mx-5 w-full h-full flex flex-col border-2 border-solid border-black gap-4">
-      <div className=" flex flex-row gap-7 border-2 border-solid border-red-400">
+    <div className=" mx-5 w-full h-full flex flex-col  gap-4">
+      <div className=" flex flex-row gap-7 ">
         <div className="mx-5 self-end justify-self-end">
           <Typography variant="h2" className="capitalize mb-1">
             {course.title}
@@ -291,6 +382,7 @@ function SinglePageCourse() {
       </Typography>
       <ReactQuill value={course.desc} readOnly={true} theme={"bubble"} />
       {DefaultAccordion}
+      {QuizFetch && QuizCpt}
     </div>
   );
 
@@ -301,7 +393,7 @@ function SinglePageCourse() {
         {side_bar}
         {Selected === 1 && Course}
         {Selected === 2 && <LessonForm CourseId={id} />}
-        {Selected === 3 && <Quiz courseId = {id} />}
+        {Selected === 3 && <Quiz courseId={id} />}
       </div>
     </>
   );
