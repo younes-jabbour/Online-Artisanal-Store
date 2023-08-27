@@ -79,9 +79,51 @@ router.get("/getCourse", async (req, res) => {
         User: {
           select: {
             name: true,
+            ImgUrl: true,
           },
         },
       },
+    });
+    res.status(200).json({
+      message: "Courses fetched successfully",
+      courses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({
+      message: "Error fetching courses",
+      error,
+    });
+  }
+});
+
+
+// get courses with a limit of 4 courses
+router.get("/getCourseLimit", async (req, res) => {
+  try {
+    const courses = await prisma.course.findMany({
+      where: {
+        published: true,
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        image: {
+          select: {
+            path: true,
+          },
+        },
+        User: {
+          select: {
+            name: true,
+            ImgUrl: true,
+          },
+        },
+      },
+      take: 4,
     });
     res.status(200).json({
       message: "Courses fetched successfully",

@@ -2,6 +2,7 @@ import React from "react";
 import { Button, Typography } from "@material-tailwind/react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import Courses from "./Courses";
+
 {
   /*
 
@@ -13,7 +14,10 @@ color4 : #5A3D2B
 */
 }
 
-function LandingPage() {
+function LearnPage() {
+
+  
+
   const FirstSection = (
     <div className="bg-BrownLight">
       <div className="flex justify-between items-center py-10 px-5">
@@ -37,7 +41,7 @@ function LandingPage() {
             ripple={false}
             className="hover:shadow-none mt-10 flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100"
           >
-            <span>courses</span>
+            <span>Courses</span>
             <ArrowLongRightIcon className="h-5 w-5" />
           </Button>
         </div>
@@ -52,10 +56,10 @@ function LandingPage() {
     </div>
   );
 
-  const HeroSection = (
-    <div className="bg-BrownLight h-32 flex items-center justify-center border-b-[2px] border-solid border-BrownDark">
+  const SecondSection = (
+    <div className="h-32 flex items-center justify-center">
       <Typography variant="h2" className="text-BrownDark">
-        our courses
+        Most Popular Courses
       </Typography>
     </div>
   );
@@ -64,9 +68,10 @@ function LandingPage() {
   return (
     <div>
       {FirstSection}
+      {SecondSection}
       <Courses />
     </div>
   );
 }
 
-export default LandingPage;
+export default LearnPage;

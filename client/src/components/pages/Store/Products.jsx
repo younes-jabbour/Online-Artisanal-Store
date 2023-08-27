@@ -163,7 +163,7 @@ function Products() {
             color="gray"
             className="font-normal opacity-75"
           >
-            {props.desc}
+            {props.desc.substring(0, 100) + "..."}
           </Typography>
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">

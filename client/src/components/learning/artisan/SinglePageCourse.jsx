@@ -14,13 +14,7 @@ import {
   AccordionBody,
   Button,
   Dialog,
-  DialogHeader,
   DialogBody,
-  DialogFooter,
-  Avatar,
-  IconButton,
-  Radio,
-  chip,
 } from "@material-tailwind/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
@@ -28,7 +22,7 @@ import { Link } from "react-router-dom";
 import LessonForm from "./LessonForm";
 import api from "../../pages/api";
 import Quiz from "./quiz/Quiz";
-import { CheckCircleIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
+import { CheckBadgeIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 function SinglePageCourse() {
   var toolbarOptions = [
@@ -70,13 +64,42 @@ function SinglePageCourse() {
   const [Mounted, setMounted] = useState(false);
   const [Lessons, setLessons] = useState([]);
   const [QuizFetch, setQuiz] = useState({});
-  console.log({ Quiz: Quiz });
+
+  // const Intro = Lessons.find((lesson) => lesson.IsIntroduction === true);
+
+  const [Intro, setIntro] = useState([]);
+  console.log("intro", Intro);
+
+  const handleDeleteLesson = (id) => async () => {
+    try {
+      await api.delete(`/lesson/DeleteLesson/${id}`).then((res) => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteQuiz = (id) => async () => {
+    try {
+      await api.delete(`/quiz/DeleteQuiz/${id}`).then((res) => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const FetchLessons = async () => {
       setMounted(true);
 
       await api.get(`/lesson/GetLessons/${id}`).then((res) => {
-        setLessons(res.data);
+        setLessons(
+          res.data.filter((lesson) => lesson.IsIntroduction === false)
+        );
+        setIntro(res.data.find((lesson) => lesson.IsIntroduction === true));
+        console.log(res.data);
       });
     };
     FetchLessons();
@@ -133,6 +156,120 @@ function SinglePageCourse() {
     // //make it slow
     // duration: 0.5,
   };
+
+  const IntroAccordion = (
+    <div>
+      {Intro && (
+        <div key={Intro.id}>
+          <Accordion
+            open={open === Intro.id}
+            icon={<Icon id={Intro.id} open={open} />}
+            className="mb-2 rounded-lg border border-blue-gray-100 px-4 duration-75"
+            animate={CUSTOM_ANIMATION}
+          >
+            <AccordionHeader
+              onClick={() => handleOpen(Intro.id)}
+              className={`border-b-0 transition-colors ${
+                open === Intro.id ? "text-blue-500 hover:!text-blue-700" : ""
+              }`}
+            >
+              {Intro.title}
+            </AccordionHeader>
+            <AccordionBody className="pt-0 text-base font-normal">
+              <ReactQuill
+                modules={modules}
+                value={Intro.desc}
+                readOnly={true}
+                theme={"bubble"}
+              />
+
+              {Intro.LessonImage && Intro.LessonImage.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <Typography
+                    variant="small"
+                    className="font-bold text-gray-600 border-b-[2px] border-solid w-fit border-gray-500"
+                  >
+                    Lesson Images
+                  </Typography>
+                  <div className="flex flex-row gap-3">
+                    {Intro.LessonImage.map((image) => (
+                      <>
+                        <Card
+                          className="cursor-pointer overflow-hidden transition-opacity hover:opacity-90"
+                          onClick={() => handleOpenImage(image.path)}
+                        >
+                          <div className="w-52 h-52">
+                            <img
+                              src={image.path}
+                              className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/70  "
+                              alt="CourseImage"
+                            />
+                          </div>
+                        </Card>
+                      </>
+                    ))}
+                    {selectedImage && (
+                      <Dialog
+                        size="lg"
+                        animate={{
+                          mount: { scale: 1, y: 0 },
+                          unmount: { scale: 0.9, y: -100 },
+                        }}
+                        open={Boolean(selectedImage)}
+                        handler={() => setSelectedImage(null)}
+                      >
+                        <DialogBody divider={false} className="p-0">
+                          <img
+                            alt="nature"
+                            className="h-full w-full object-cover object-center"
+                            src={selectedImage}
+                          />
+                        </DialogBody>
+                      </Dialog>
+                    )}
+                  </div>
+                </div>
+              )}
+              {Intro.LessonVideo && Intro.LessonVideo.length > 0 && (
+                <div className="flex flex-col gap-2 mt-5">
+                  <Typography
+                    variant="small"
+                    className="font-bold text-gray-600 border-b-[2px] border-solid w-fit border-gray-500"
+                  >
+                    Lesson Videos
+                  </Typography>
+                  <div className="flex flex-row gap-3">
+                    {Intro.LessonVideo.map((video) => (
+                      <div className="w-52 h-52">
+                        <video
+                          src={video.path}
+                          className="h-full w-full rounded-lg object-cover object-center shadow-xl shadow-blue-gray-900/10  "
+                          alt="CourseImage"
+                          controls
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <Button
+                  color="red"
+                  variant="gradient"
+                  className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
+                  onClick={handleDeleteLesson(Intro.id)}
+                >
+                  <TrashIcon className="h-4 w-4 m-0 p-0" />
+                  <span className="font-normal">Delete</span>
+                </Button>
+              </div>
+            </AccordionBody>
+          </Accordion>
+        </div>
+      )}
+    </div>
+  );
 
   const DefaultAccordion = (
     <div>
@@ -230,6 +367,17 @@ function SinglePageCourse() {
                     </div>
                   </div>
                 )}
+                <div className="flex justify-end">
+                  <Button
+                    color="red"
+                    variant="gradient"
+                    className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
+                    onClick={handleDeleteLesson(lesson.id)}
+                  >
+                    <TrashIcon className="h-4 w-4 m-0 p-0" />
+                    <span className="font-normal">Delete</span>
+                  </Button>
+                </div>
               </AccordionBody>
             </Accordion>
           </div>
@@ -346,9 +494,20 @@ function SinglePageCourse() {
               </div>
             </div>
           ))}
-        {/* <div className="mt-10 flex justify-center ">
-          <Button variant="gradient" className="hover:shadow-none">Confirm your reponse</Button>
-        </div> */}
+
+        <div className="flex justify-end">
+          {QuizFetch && (
+            <Button
+              color="red"
+              variant="gradient"
+              className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
+              onClick={handleDeleteQuiz(QuizFetch.id)}
+            >
+              <TrashIcon className="h-4 w-4 m-0 p-0" />
+              <span className="font-normal">Delete</span>
+            </Button>
+          )}
+        </div>
       </AccordionBody>
     </Accordion>
   );
@@ -381,6 +540,7 @@ function SinglePageCourse() {
         Course Description
       </Typography>
       <ReactQuill value={course.desc} readOnly={true} theme={"bubble"} />
+      {IntroAccordion}
       {DefaultAccordion}
       {QuizFetch && QuizCpt}
     </div>

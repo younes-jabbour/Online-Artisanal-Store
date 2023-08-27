@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Carousel,
   Typography,
@@ -12,6 +12,9 @@ import {
 import { addProduct } from "../../../redux/cartRedux";
 import { useDispatch } from "react-redux";
 
+import api from "../../pages/api";
+import axios from "axios";
+
 const urls = [
   "http://localhost:5000/images/1.jpeg",
   "http://localhost:5000/images/2.jpeg",
@@ -22,7 +25,22 @@ function Hero() {
   const [quantity, setQuantity] = useState(0);
   const dispatch = useDispatch();
 
-  // const handleAddToCart = () => {};
+  const [TreeProducts, setTreeProducts] = useState({});
+
+  useEffect(() => {
+    const fetchTreeProducts = async () => {
+      try {
+        await axios.get("http://localhost:5000/product/").then((res) => {
+          setTreeProducts(res.data.products);
+          console.log(res.data.products);
+        });
+      } catch (error) {
+        console.error("Error fetching tree products:", error);
+      }
+    };
+
+    fetchTreeProducts();
+  }, []);
 
   const HandleClick = () => {
     setQuantity(quantity + 1);
@@ -56,60 +74,69 @@ function Hero() {
     </div>
   );
 
-  const [count, SetCount] = useState(0);
+  const CardProducts = ({product}) => {
+    return (
+      <>
+        <Card shadow={true} className="w-96">
+          <CardHeader floated={false} className="h-52">
+            <img
+              src={product.image.path}
+              alt="cards"
+              className="object-cover h-52 w-96"
+            />
+          </CardHeader>
+          <CardBody>
+            <div className="mb-2 flex items-center justify-between">
+              <Typography color="blue-gray" className="font-medium">
+                {product.name}
+              </Typography>
+              <Typography color="blue-gray" className="font-medium">
+                ${product.price}
+              </Typography>
+            </div>
+            <Typography
+              variant="small"
+              color="gray"
+              className="font-normal opacity-75"
+            >
+              {product.desc.substring(0,50) + "..."}
+            </Typography>
+          </CardBody>
+          <CardFooter className="pt-0">
+            <Button
+              onClick={HandleClick}
+              ripple={false}
+              fullWidth={true}
+              className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+            >
+              Add to Cart
+            </Button>
+          </CardFooter>
+        </Card>
+      </>
+    );
+  };
 
-  const card = (
-    <Card shadow={true} className="w-96">
-      <CardHeader floated={false} className="h-52">
-        <img
-          src="https://picsum.photos/200/200"
-          alt="cards"
-          className="object-cover h-52 w-96"
-        />
-      </CardHeader>
-      <CardBody>
-        <div className="mb-2 flex items-center justify-between">
-          <Typography color="blue-gray" className="font-medium">
-            Apple AirPods
-          </Typography>
-          <Typography color="blue-gray" className="font-medium">
-            $95.00
-          </Typography>
-        </div>
-        <Typography
-          variant="small"
-          color="gray"
-          className="font-normal opacity-75"
-        >
-          With plenty of talk and listen time, voice-activated Siri access, and
-          an available wireless charging case.
-        </Typography>
-      </CardBody>
-      <CardFooter className="pt-0">
-        <Button
-          onClick={HandleClick}
-          ripple={false}
-          fullWidth={true}
-          className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-        >
-          Add to Cart
-        </Button>
-      </CardFooter>
-    </Card>
-  );
+
 
   const BestSells = (
     <div className="border-2 border-solid  pb-28 bg-orange-50">
       <Typography variant="h2" className="my-10 text-BrownDark text-center">
         Our best sells
       </Typography>
-      <div className="mx-12 flex gap-3 justify-center flex-wrap ">
-        {card}
-        {card}
-        {card}
+      <div className="mx-12 flex gap-4 justify-center flex-wrap ">
+        {TreeProducts && TreeProducts.length > 0 && 
+        
+        TreeProducts.map((product) => (
+          <CardProducts product={product} />
+        ))
+
+        }
       </div>
     </div>
   );
+
+  
 
   const ArtisanAvatars = (
     <div className="flex items-center -space-x-4">
@@ -126,7 +153,7 @@ function Hero() {
         src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1061&q=80"
       />
       <Avatar
-      variant="circular"
+        variant="circular"
         size="xxl"
         className="border-2 border-white hover:z-10 focus:z-10 rounded-full"
         src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1288&q=80"

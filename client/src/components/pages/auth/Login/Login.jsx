@@ -135,7 +135,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
-    console.log(inputs);
     try {
       if (isFormValid) {
         const response = await axios

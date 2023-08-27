@@ -111,6 +111,8 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+
 // delete a specific product
 router.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
@@ -160,6 +162,7 @@ router.put("/update/:id", upload.single("product_img"), async (req, res) => {
         "../public/images/product",
         previousImage.filename
       );
+      console.log(previousImage.filename);
       fs.unlinkSync(Path); // delete image from folder
 
       const updatedImage = await prisma.image.update({

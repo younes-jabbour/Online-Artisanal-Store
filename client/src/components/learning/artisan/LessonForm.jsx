@@ -7,8 +7,9 @@ import {
   Chip,
   Input,
   Button,
+  Radio,
 } from "@material-tailwind/react";
-import { PencilSquareIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -16,7 +17,6 @@ import api from "../../pages/api";
 import axios from "axios";
 
 function LessonForm(props) {
-
   var toolbarOptions = [
     ["bold", "italic", "underline", "strike"], // toggled buttons
     ["blockquote", "code-block"],
@@ -36,14 +36,30 @@ function LessonForm(props) {
 
     ["clean"], // remove formatting button
   ];
-    const modules =  {
-      toolbar: toolbarOptions,
-    };
+  const modules = {
+    toolbar: toolbarOptions,
+  };
+
+  const id = props.CourseId;
 
   const [Text, setText] = useState(""); // for description
   const [Title, setTitle] = useState("");
+  const [isIntroduction, setisIntroduction] = useState(false);
+  const [IntroExist, setIntroExist] = useState(null);
 
-  const id = props.CourseId;
+  useEffect(() => {
+    const isIntroduction = async () => {
+      try {
+        await api.get(`lesson/IsIntroduction/${id}`).then((res) => {
+          if (res.status === 200) setIntroExist(true);
+          else if (res.status === 404) setIntroExist(false);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    isIntroduction();
+  }, []);
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [imageInputKey, setImageInputKey] = useState(Date.now());
@@ -87,6 +103,7 @@ function LessonForm(props) {
       selectedVideo.forEach((video) => {
         formData.append("videos", video);
       });
+      formData.append("isIntroduction", isIntroduction);
 
       await api
         .post(`lesson/NewLesson/${id}`, formData, {
@@ -95,8 +112,10 @@ function LessonForm(props) {
           },
         })
         .then((res) => {
-          if (res.status === 200) window.alert("Lesson created successfully");
-          else window.alert("Error creating lesson");
+          if (res.status === 200) {
+            window.alert("Lesson created successfully");
+            window.location.reload();
+          } else window.alert("Error creating lesson");
         });
     } catch (error) {
       console.error(error);
@@ -149,8 +168,39 @@ function LessonForm(props) {
             >
               Text of lesson
             </Typography>
-            <ReactQuill modules={modules} theme="snow" value={Text} onChange={setText} />
+            <ReactQuill
+              modules={modules}
+              theme="snow"
+              value={Text}
+              onChange={setText}
+            />
           </div>
+
+          {!IntroExist ? (
+            <div className="my-1">
+              <Typography
+                variant="small"
+                color="blue-gray"
+                className="mb-4 font-medium"
+              >
+                Is Introduction of course
+              </Typography>
+              <div className="flex gap-10 justify-center">
+                <Radio
+                  name="type"
+                  label={<Chip value="true" variant="ghost" color="green" />}
+                  onClick={() => setisIntroduction(true)}
+                  defaultChecked={isIntroduction}
+                />
+                <Radio
+                  name="type"
+                  label={<Chip value="false" color="red" variant="ghost" />}
+                  onClick={() => setisIntroduction(false)}
+                  defaultChecked={!isIntroduction}
+                />
+              </div>
+            </div>
+          ) : null}
 
           <div className="my-1">
             <Typography

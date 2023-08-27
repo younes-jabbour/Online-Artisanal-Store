@@ -20,12 +20,13 @@ import { ThemeProvider } from "@material-tailwind/react";
 import Missing from "./components/pages/Errors/Missing";
 import ListProducts from "./components/pages/Profile/artisan/ListProducts";
 import Anauthorized from "./components/pages/Errors/Anauthorized";
-import LandingPage from "./components/learning/LandingPage";
+import LearnPage from "./components/learning/LearnPage";
 import Dashboard from "./components/learning/artisan/Dashboard";
 import SinglePageCourse from "./components/learning/artisan/SinglePageCourse";
 import Success from "./components/payment/Success";
 import Concel from "./components/payment/Concel";
 import Courses from "./components/learning/Courses";
+import CoursePage from "./components/learning/CoursePage";
 
 function App() {
   const customTheme = {
@@ -87,7 +88,8 @@ function App() {
               </Route>
               {/* public routes */}
               <Route path="/products" element={<Products />} />
-              <Route path="/learn" element={<LandingPage />} />
+              <Route path="/learn" element={<LearnPage />} />
+              <Route path="/learn/course" element={<CoursePage />} />
             </Route>
             {/* without layout */}
             <Route path="/profile/course" element={<Dashboard />} />

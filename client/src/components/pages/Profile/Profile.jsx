@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 
 import api from "../api";
 import {
@@ -20,7 +19,6 @@ import {
   ListItem,
   ListItemPrefix,
   ListItemSuffix,
-  Chip,
 } from "@material-tailwind/react";
 import {
   EyeIcon,
@@ -33,15 +31,39 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "../../../context/UserContext";
-import { Navigate, Link, Outlet } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import useFetchData from "../../../hooks/useFetchData";
 
-import ListProducts from "./artisan/ListProducts";
-
 function Profile() {
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [oldPassword, setoldPassword] = useState(null);
+  const [newPassword, setnewPassword] = useState(null);
+  const [descUser, setDescUser] = useState("");
+  const [imgUser, setImgUser] = useState(null);
+
+  const { userInfo } = useUserContext();
+  const id = userInfo.id;
+  const type = userInfo.type;
+
+  const { data } = useFetchData(`http://localhost:5000/users/${id}`);
+  useEffect(() => {
+    const FetchData = () => {
+      if (data) {
+        setUserName(data.name);
+        setEmail(data.email);
+        setDescUser(data.desc);
+        setImageUrl(data.ImgUrl);
+      }
+    };
+    FetchData();
+  }, [data]);
+
   const [categories, Setcategories] = useState([]);
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = React.useState(false);
+
+  const [imgUrl, setImageUrl] = useState(null);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -50,38 +72,77 @@ function Profile() {
   const [categoryId, setCategoryId] = useState("");
 
   //users update info
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [descUser, setDescUser] = useState("");
-  const [imgUser, setImgUser] = useState(null);
-  const { userInfo } = useUserContext();
 
   const [disabled, setDisabled] = useState(true);
   const [Selected, setSelected] = useState(1);
+  const [errors, setErrors] = useState({});
+  const [ErrorMessage, setErrorMessage] = useState(" ");
 
-  const id = userInfo.id;
-  const type = userInfo.type;
 
-  //Get user info by type (artisan or client)
-  const { data, loading, error } = useFetchData(
-    `http://localhost:5000/users/${id}`
-  );
+  // const validateForm = () => {
+  //   const newErrors = {};
+  //   // Validate password (Example: Password must be at least 6 characters long)
+  //   if (oldPassword.length < 6) {
+  //     newErrors.oldPassword = "Password must be at least 6 characters long";
+  //   }
+  //   if (newPassword.length < 6) {
+  //     newErrors.newPassword = "Password must be at least 6 characters long";
+  //   }
+
+  //   setErrors(newErrors);
+  //   return Object.keys(newErrors).length === 0; // Return true if there are no errors
+  // };
+
+  // useEffect(() => {
+  //   if (oldPassword && newPassword) {
+  //     if (oldPassword.length >= 6) {
+  //       setErrors({ ...errors, oldPassword: "" });
+  //     }
+  //     if (newPassword.length >= 6) {
+  //       setErrors({ ...errors, newPassword: "" });
+  //     }
+  //   }
+  // }, [oldPassword, newPassword, errors]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImgUser(file);
+    const imageUrl = URL.createObjectURL(file);
+    setImageUrl(imageUrl);
+  };
 
   const UpdateUserInfo = async (e) => {
     // update request handler
+    // if (newPassword && oldPassword) {
+    //   const isValid = validateForm();
+    //   if (!isValid) return;
+    // }
     e.preventDefault();
     try {
       const formData = new FormData();
       formData.append("name", userName);
       formData.append("email", email);
-      formData.append("img", imgUser);
+      formData.append("image", imgUser);
+      formData.append("oldPassword", oldPassword);
+      formData.append("newPassword", newPassword);
       if (type === "artisan") formData.append("desc", descUser);
-      const response = await api.put(`/users/update/${type}/${id}`, formData, {
-        withCredentials: true,
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.log(error);
+
+      await api
+        .put(`/users/update/${id}`, formData, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          console.log(res);
+          window.location.reload();
+        });
+    } catch (err) {
+      if (!err.response) {
+        setErrorMessage("No server response");
+        console.log(err);
+      } else if (err.response && err.response.status === 404)
+        setErrorMessage("user not found!");
+      else if (err.response && err.response.status === 400)
+        setErrorMessage("wrong old password !");
     }
   };
 
@@ -94,13 +155,11 @@ function Profile() {
       formData.append("desc", desc);
       formData.append("product_img", image);
       formData.append("categoryId", categoryId);
-      console.log(formData);
 
       const response = await api.post(`/product/newProduct/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-      console.log(response.data);
       handleOpen();
     } catch (error) {
       console.log(error);
@@ -261,7 +320,9 @@ function Profile() {
       <div className="mt-[-2rem] mx-auto  flex flex-col h-fit items-center w-96">
         <div className=" rounded-full mb-3">
           {image ? (
-            <Avatar src={image} alt="avatar" size="xl" />
+            <Avatar src={image} alt="avatar" className="h-20 w-20" />
+          ) : imgUrl ? (
+            <Avatar src={imgUrl} alt="avatar" className="h-20 w-20" />
           ) : (
             <CameraIcon className="h-12 w-12 " />
           )}
@@ -277,7 +338,8 @@ function Profile() {
                 variant="outlined"
                 label="name"
                 disabled={disabled}
-                value={disabled ? data.name : null}
+                // value={disabled ? data.name : null}
+                value={userName}
                 onChange={(e) => setUserName(e.target.value)}
               />
               <Input
@@ -285,7 +347,8 @@ function Profile() {
                 variant="outlined"
                 label="email"
                 disabled={disabled}
-                value={disabled ? data.email : null}
+                // value={disabled ? data.email : null}
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </>
@@ -293,11 +356,12 @@ function Profile() {
           <Input
             size="md"
             variant="outlined"
-            value=""
+            value={oldPassword}
             type={visible ? "text" : "password"}
-            id="input"
+            id="input1"
             disabled={disabled}
             label="old password"
+            onChange={(e) => setoldPassword(e.target.value)}
             icon={
               visible ? (
                 <EyeSlashIcon onClick={handlEyeClick} />
@@ -306,21 +370,26 @@ function Profile() {
               )
             }
           />
+          {/* {errors && (
+            <Typography variant="small" className="text-red-500 m-0 p-0">
+              {errors.oldPassword}
+            </Typography>
+          )} */}
           <Input
             size="md"
             variant="outlined"
-            type={visible ? "text" : "password"}
-            id="input"
+            type="text"
+            id="input2"
             disabled={disabled}
             label="new password"
-            icon={
-              visible ? (
-                <EyeSlashIcon onClick={handlEyeClick} />
-              ) : (
-                <EyeIcon onClick={handlEyeClick} />
-              )
-            }
+            onChange={(e) => setnewPassword(e.target.value)}
+            value={newPassword}
           />
+          {/* {errors && (
+            <Typography variant="small" className="text-red-500 m-0 p-0">
+              {errors.newPassword}
+            </Typography>
+          )} */}
           <Input
             size="md"
             variant="outlined"
@@ -330,11 +399,11 @@ function Profile() {
             name="image"
             accept=".jpg, .png, .gif, .jpeg"
             disabled={disabled}
-            onChange={(e) => setImgUser(e.target.files[0])}
+            onChange={handleImageChange}
           />
           {type === "artisan" && data && (
             <Textarea
-              value={disabled ? data.desc : null}
+              value={descUser}
               disabled={disabled}
               className=""
               onChange={(e) => setDescUser(e.target.value)}

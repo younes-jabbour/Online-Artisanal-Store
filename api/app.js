@@ -50,7 +50,7 @@ app.use(
 );
 
 app.use(
-  "/images/user",
+  "/images/users",
   express.static(path.join(__dirname, "public/images/users"))
 );
 

@@ -13,14 +13,19 @@ import {
 } from "@material-tailwind/react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 import { Swiper, SwiperSlide } from "swiper/react";
-import 'swiper/css';
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setCourseData } from "../../redux/Courselice";
 
 function Courses() {
+  const dispatch = useDispatch();
+
   const [courses, setCourses] = useState([]);
-  console.log(courses);
-  console.log(courses.lenght);
+
   useEffect(() => {
     const FetchCourses = async () => {
       try {
@@ -40,11 +45,12 @@ function Courses() {
   return (
     <div className="h-full w-full flex flex-wrap gap-3 mx-4 my-1">
       <Swiper
-      spaceBetween={50}
-      slidesPerView={3}
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
-    >
+        spaceBetween={50}
+        slidesPerView={3}
+        modules={[Navigation]}
+        navigation={true}
+        className="mySwiper"
+      >
         {courses &&
           courses.map((course) => (
             <SwiperSlide>
@@ -80,13 +86,13 @@ function Courses() {
                       value={course.category.name}
                     />
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="mx-5 flex items-center gap-4">
                     <Avatar
                       className="h-10 w-10"
-                      src="https://picsum.photos/id/237/200/300"
+                      src={course.User.ImgUrl}
                       alt="avatar"
                     />
-                    <div>
+                    <div className="mx-5">
                       <Typography variant="h6">Creator</Typography>
                       <Typography
                         variant="small"
@@ -108,16 +114,20 @@ function Courses() {
                   >
                     Enroll now
                   </Button>
+                  <Link to="/learn/course">
+                  
                   <Button
                     size="sm"
                     ripple={false}
                     variant="outlined"
                     color="light-blue"
+                    onClick={()=>{dispatch(setCourseData({course}))}}
                     className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
                   >
                     <span>More Details</span>
                     <ArrowLongRightIcon className="h-5 w-5" />
                   </Button>
+                  </Link>
                 </CardFooter>
               </Card>
             </SwiperSlide>

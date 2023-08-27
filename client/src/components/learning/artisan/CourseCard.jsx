@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
   Card,
   CardHeader,
   CardBody,
@@ -12,14 +16,15 @@ import {
 import {
   CheckCircleIcon,
   ExclamationTriangleIcon,
+  EllipsisVerticalIcon,
 } from "@heroicons/react/24/solid";
-import SinglePageCourse from "./SinglePageCourse";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourseData } from "../../../redux/Courselice";
 
 import api from "../../pages/api";
 import axios from "axios";
+import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 
 function CourseCard(props) {
   const { id, course } = props;
@@ -48,9 +53,10 @@ function CourseCard(props) {
     };
     published();
   }, [Changed]);
+
   return (
     <>
-      <Card className="mt-6 w-[24rem] border-solid border-[1px] border-gray-500/20">
+      <Card className="mb-20 mx-10 w-[24rem] border-solid border-[1px] border-gray-500/20">
         <CardHeader color="blue-gray" className=" h-48">
           <img
             src={course.image?.path}
@@ -59,9 +65,26 @@ function CourseCard(props) {
           />
         </CardHeader>
         <CardBody>
-          <Typography variant="h5" color="blue-gray" className="mb-2">
-            {course.title}
-          </Typography>
+          <div className="flex justify-between">
+            <Typography variant="h5" color="blue-gray" className="mb-2 ">
+              {course.title}
+            </Typography>
+            <Menu placement="right-end">
+              <MenuHandler>
+                <EllipsisVerticalIcon className="h-5 w-5 hover:cursor-pointer" />
+              </MenuHandler>
+              <MenuList>
+                <MenuItem className="flex items-center">
+                  <PencilIcon className="h-4 w-4 mr-2" />
+                  <span className="">Edit</span>
+                </MenuItem>
+                <MenuItem className="flex items-center">
+                  <TrashIcon color="red" className="h-4 w-4 mr-2" />
+                  <span className="text-red-500">Delete</span>
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </div>
           <Chip
             variant="ghost"
             className="w-fit"
