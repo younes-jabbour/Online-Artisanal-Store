@@ -17,7 +17,7 @@ const ERROR_MESSAGE = {
   REFRESH_EXPIRED: "Refresh token has expired",
 };
 
-const apiPublic = axios.create({
+const PublicApi = axios.create({
   baseURL: BASE_URL,
 });
 
@@ -73,43 +73,4 @@ api.interceptors.response.use(
 
 export default api;
 
-export { apiPublic };
-
-// api.interceptors.request.use(
-//   async (config) => {
-//     const accessToken = localStorage.getItem("AccessToken");
-//     const RefreshToken = localStorage.getItem("RefreshToken");
-
-//     const isTokenValid = accessToken && checkTokenExpiry(accessToken);
-//     if (isTokenValid) {
-//       config.headers.Authorization = `Bearer ${accessToken}`;
-//     } else {
-//       try {
-//         const response = await axios.post(`${BASE_URL}/auth/refresh`, {
-//           RefreshToken: localStorage.getItem("RefreshToken"),
-//         });
-
-//         localStorage.setItem("AccessToken", response.data.AccessToken);
-//         localStorage.setItem("RefreshToken", response.data.RefreshToken);
-
-//         // console.log(jwt_decode(response.data.accessToken));
-//       } catch (error) {
-//         console.log("Token refresh failed:");
-//       }
-//     }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
-
-// this function check if the AccesToken expired or not.
-// function checkTokenExpiry(token) {
-//   try {
-//     const decodedToken = jwt_decode(token);
-//     return decodedToken.exp * 1000 > Date.now();
-//   } catch (error) {
-//     return false;
-//   }
-// }
+export { PublicApi };

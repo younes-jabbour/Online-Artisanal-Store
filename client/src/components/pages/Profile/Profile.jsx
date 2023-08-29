@@ -29,6 +29,7 @@ import {
   UserCircleIcon,
   InboxIcon,
   PowerIcon,
+  ComputerDesktopIcon,
 } from "@heroicons/react/24/outline";
 import { useUserContext } from "../../../context/UserContext";
 import { Navigate, Link } from "react-router-dom";
@@ -77,7 +78,6 @@ function Profile() {
   const [Selected, setSelected] = useState(1);
   const [errors, setErrors] = useState({});
   const [ErrorMessage, setErrorMessage] = useState(" ");
-
 
   // const validateForm = () => {
   //   const newErrors = {};
@@ -228,15 +228,41 @@ function Profile() {
             Dashboard of courses
           </ListItem>
         </Link>
-        <ListItem className="text-red-800">
-          <ListItemPrefix>
-            <PowerIcon className="h-5 w-5 " />
-          </ListItemPrefix>
-          Log Out
-        </ListItem>
+        <Link to="/profile/my_courses">
+          {" "}
+          {/* to="/profile/my_courses" TO DO NOW ... */}
+          <ListItem>
+            <ListItemPrefix>
+              <ComputerDesktopIcon className="h-5 w-5 " />
+            </ListItemPrefix>
+            My Courses
+          </ListItem>
+        </Link>
       </List>
     </Card>
   );
+
+  const side_bar_user = (
+    <Card className="h-fit w-full  rounded-none max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <div className="mb-2 p-4">
+      <Typography variant="h5" color="blue-gray">
+        menu
+      </Typography>
+    </div>
+    <List>
+      <Link to="/profile/my_courses">
+        {" "}
+        {/* to="/profile/my_courses" TO DO NOW ... */}
+        <ListItem>
+          <ListItemPrefix>
+            <ComputerDesktopIcon className="h-5 w-5 " />
+          </ListItemPrefix>
+          My Courses
+        </ListItem>
+      </Link>
+    </List>
+  </Card>
+  )
 
   const Dialog_cpt = (
     <>
@@ -457,7 +483,10 @@ function Profile() {
               {Selected === 1 && inputs}
             </div>
           ) : (
-            <>{inputs}</>
+            <div className=" h-fit grid grid-cols-[300px_1fr]">
+              <div>{side_bar_user}</div>
+              {Selected === 1 && inputs}
+              </div>
           )}
         </>
       ) : (

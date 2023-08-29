@@ -126,8 +126,9 @@ model OrderItem {
 model Lesson {
   id             Int           @id @default(autoincrement())
   title          String
-  desc           String?        @db.LongText
+  desc           String?       @db.LongText
   courseId       Int
+  isCompleted    Boolean?      @default(false)
   Course         Course        @relation(fields: [courseId], references: [id])
   LessonImage    LessonImage[]
   LessonVideo    LessonVideo[]
@@ -155,6 +156,7 @@ model Enrollment {
   date     DateTime
   courseId Int
   userId   Int
+  progress Int      @default(0)
   course   Course   @relation(fields: [courseId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
 }

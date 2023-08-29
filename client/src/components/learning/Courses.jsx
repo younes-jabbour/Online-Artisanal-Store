@@ -21,10 +21,17 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCourseData } from "../../redux/Courselice";
 
+import { useUserContext } from "../../context/UserContext";
+
 function Courses() {
   const dispatch = useDispatch();
 
   const [courses, setCourses] = useState([]);
+
+  const { userInfo, Enrollement } = useUserContext();
+  // const [isEnrolled, setisEnrolled] = useState(false);
+
+  const userId = userInfo.id;
 
   useEffect(() => {
     const FetchCourses = async () => {
@@ -33,6 +40,7 @@ function Courses() {
           .get("http://localhost:5000/courses/getCourse")
           .then((res) => {
             setCourses(res.data.courses);
+            // console.log(res.data.courses);
           });
       } catch (err) {
         console.error(err);
@@ -105,28 +113,48 @@ function Courses() {
                   </div>
                 </CardBody>
                 <CardFooter className="pt-0 mt-4 flex items-center justify-between">
-                  <Button
-                    color="light-blue"
-                    ripple={false}
-                    variant="gradient"
-                    className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
-                    size="sm"
-                  >
-                    Enroll now
-                  </Button>
+                  {!course.Enrollment.find(
+                    (enroll) => enroll.userId === userId
+                  ) ? (
+                    <Button
+                      color="light-blue"
+                      ripple={false}
+                      variant="gradient"
+                      className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
+                      size="sm"
+                    >
+                      Enroll now
+                    </Button>
+                  ) : (
+                    <Button
+                      color="light-blue"
+                      ripple={false}
+                      variant="outlined"
+                      className="capitalize hover:shadow-none flex gap-1 items-center "
+                      size="sm"
+                    >
+                      Enrolled
+                    </Button>
+                  )}
                   <Link to="/learn/course">
-                  
-                  <Button
-                    size="sm"
-                    ripple={false}
-                    variant="outlined"
-                    color="light-blue"
-                    onClick={()=>{dispatch(setCourseData({course}))}}
-                    className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
-                  >
-                    <span>More Details</span>
-                    <ArrowLongRightIcon className="h-5 w-5" />
-                  </Button>
+                    <Button
+                      size="sm"
+                      ripple={false}
+                      variant="outlined"
+                      color="light-blue"
+                      onClick={() => {
+                        dispatch(
+                          setCourseData({
+                            course: course,
+                          })
+                        );
+                        console.log({ course: course })
+                      }}
+                      className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
+                    >
+                      <span>More Details</span>
+                      <ArrowLongRightIcon className="h-5 w-5" />
+                    </Button>
                   </Link>
                 </CardFooter>
               </Card>

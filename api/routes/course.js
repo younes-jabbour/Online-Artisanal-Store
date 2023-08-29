@@ -82,6 +82,12 @@ router.get("/getCourse", async (req, res) => {
             ImgUrl: true,
           },
         },
+        Enrollment: {
+            select: { 
+                userId: true,
+                courseId: true,
+            },
+        },
       },
     });
     res.status(200).json({

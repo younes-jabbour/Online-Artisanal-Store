@@ -27,6 +27,7 @@ import Success from "./components/payment/Success";
 import Concel from "./components/payment/Concel";
 import Courses from "./components/learning/Courses";
 import CoursePage from "./components/learning/CoursePage";
+import MyCourses from "./components/learning/MyCourses";
 
 function App() {
   const customTheme = {
@@ -81,6 +82,7 @@ function App() {
               {/* private routes require authentication */}
               <Route element={<RequireAuth />}>
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/profile/my_courses" element={<MyCourses />} />
                 <Route
                   path="/profile/list_of_products"
                   element={<ListProducts />}

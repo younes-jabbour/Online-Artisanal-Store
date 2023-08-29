@@ -1,5 +1,5 @@
 // courseSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   id: null,
@@ -7,11 +7,12 @@ const initialState = {
 };
 
 const courseSlice = createSlice({
-  name: 'course',
+  name: "course",
   initialState,
   reducers: {
     setCourseData: (state, action) => {
       state.id = action.payload.id;
+      state.course = null;
       state.course = action.payload.course;
     },
   },
