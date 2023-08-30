@@ -78,6 +78,7 @@ function Quiz(props) {
     await api.post(`/quiz/NewQuiz/${id}`, data).then((res) => {
       console.log(res);
       window.alert("Quiz Created Successfully");
+      window.location.reload();
     });
   };
 

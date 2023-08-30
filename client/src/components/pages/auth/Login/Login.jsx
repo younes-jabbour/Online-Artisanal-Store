@@ -137,12 +137,15 @@ function Login() {
     const isFormValid = validateForm();
     try {
       if (isFormValid) {
-        const response = await axios
-          .post("http://localhost:5000/auth/login", inputs, {
+        const response = await axios.post(
+          "http://localhost:5000/auth/login",
+          inputs,
+          {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          })
-        console.log(response.data)
+          }
+        );
+        console.log(response.data);
         localStorage.setItem("AccessToken", response.data.AccessToken);
         Setsuccess(true);
         window.location.href = "/";
@@ -257,6 +260,7 @@ function Login() {
                 <Button
                   className="mt-6"
                   variant="filled"
+                  type="submit"
                   color="brown"
                   ripple={false}
                   onClick={handleSubmit}

@@ -41,6 +41,7 @@ export const UserProvider = ({ children }) => {
 
   const [userInfo, setUserInfo] = useState(userContextInitialValue);
   const [Enrollement, setEnrollement] = useState([]);
+  const [completedEnrollement, setcompletedEnrollement] = useState([]);
   const dispatch = useDispatch();
 
   const memoizedDispatch = useCallback(dispatch, []);
@@ -57,6 +58,10 @@ export const UserProvider = ({ children }) => {
           // dispatch(enroll(res.data));
         })
         .catch((err) => console.log(err));
+
+      api.get(`/enroll/getCompletedEnroll/${userInfo.id}`).then((res) => {
+        setcompletedEnrollement(res.data);
+      });
     } else {
       setEnrollement([]);
     }
@@ -91,7 +96,13 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ userInfo, setUserInfo, logout, Enrollement }}
+      value={{
+        userInfo,
+        setUserInfo,
+        logout,
+        Enrollement,
+        completedEnrollement,
+      }}
     >
       {children}
     </UserContext.Provider>

@@ -74,6 +74,7 @@ function Dashboard() {
   useEffect(() => {
     if (Success) {
       alert("course created successfully");
+      window.location.reload();
     }
   }, [Success]);
 

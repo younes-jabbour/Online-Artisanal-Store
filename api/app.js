@@ -20,6 +20,8 @@ var quizRouter = require("./routes/quiz");
 
 var enrollRouter = require("./routes/Enroll");
 
+var completedLessonRouter = require("./routes/completedLesson");
+
 require("dotenv").config();
 
 // var { expressjwt: jwt } = require("express-jwt");
@@ -89,6 +91,8 @@ app.use("/lesson", lessonRouter);
 app.use("/quiz", quizRouter);
 
 app.use("/enroll", enrollRouter);
+
+app.use("/completedLesson", completedLessonRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -61,8 +61,7 @@ router.get("/getQuiz/:id", async (req, res) => {
   res.status(200).json(quiz);
 });
 
-
-router.delete('/deleteQuiz/:id', async (req, res) => {
+router.delete("/deleteQuiz/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -79,7 +78,7 @@ router.delete('/deleteQuiz/:id', async (req, res) => {
     });
 
     if (!quiz) {
-      return res.status(404).json({ error: 'Quiz not found' });
+      return res.status(404).json({ error: "Quiz not found" });
     }
 
     // Delete options associated with each question
@@ -99,20 +98,37 @@ router.delete('/deleteQuiz/:id', async (req, res) => {
       where: { id: quiz.id },
     });
 
-    res.status(200).json({ message: 'Quiz and its related data deleted successfully' });
+    res
+      .status(200)
+      .json({ message: "Quiz and its related data deleted successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while deleting the quiz' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the quiz" });
   }
 });
 
+// get quiz name and id by using course id
+router.get("/getQuizName/:courseId", async (req, res) => {
+  const { courseId } = req.params;
+
+  const quiz = await prisma.quiz.findMany({
+    where: {
+      courseId: parseInt(courseId),
+    },
+    select: {
+      id: true,
+      title: true,
+    },
+  });
+
+  res.status(200).json(quiz);
+});
 
 module.exports = router;
 
 // get quiz and there questions and ther options related to course by using id of course.
-
-
-
 
 // router.delete("/deleteQuiz/:id", async (req, res) => {
 //   const { id } = req.params;

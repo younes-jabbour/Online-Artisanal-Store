@@ -50,19 +50,20 @@ model Image {
 }
 
 model Course {
-  id         Int          @id @default(autoincrement())
-  title      String       @db.VarChar(40)
-  desc       String?      @db.LongText
-  published  Boolean      @default(false)
-  Enrollment Enrollment[]
-  lesson     Lesson[]
-  imageId    Int?         @unique
-  image      Image?       @relation(fields: [imageId], references: [id])
-  UserId     Int
-  User       User         @relation(fields: [UserId], references: [id])
-  categoryId Int
-  category   Category     @relation(fields: [categoryId], references: [id])
-  quiz       Quiz?
+  id           Int          @id @default(autoincrement())
+  title        String       @db.VarChar(40)
+  desc         String?      @db.LongText
+  published    Boolean      @default(false)
+  Enrollment   Enrollment[]
+  lesson       Lesson[]
+  imageId      Int?         @unique
+  image        Image?       @relation(fields: [imageId], references: [id])
+  UserId       Int
+  User         User         @relation(fields: [UserId], references: [id])
+  categoryId   Int
+  category     Category     @relation(fields: [categoryId], references: [id])
+  quiz         Quiz?
+  LessonsCount Int?         @default(0)
 }
 
 model Quiz {
@@ -123,16 +124,37 @@ model OrderItem {
   order       Order   @relation(fields: [orderId], references: [id])
 }
 
+model Enrollment {
+  id              Int               @id @default(autoincrement())
+  date            DateTime
+  courseId        Int
+  userId          Int
+  progress        Int               @default(0)
+  isCompleted     Boolean?           @default(false)
+  course          Course            @relation(fields: [courseId], references: [id])
+  user            User              @relation(fields: [userId], references: [id])
+  CompletedLesson CompletedLesson[]
+}
+
+model CompletedLesson {
+  id           Int        @id @default(autoincrement())
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollmentId Int
+  completed    Boolean    @default(false)
+  lesson       Lesson     @relation(fields: [lessonId], references: [id])
+  lessonId     Int
+}
+
 model Lesson {
-  id             Int           @id @default(autoincrement())
-  title          String
-  desc           String?       @db.LongText
-  courseId       Int
-  isCompleted    Boolean?      @default(false)
-  Course         Course        @relation(fields: [courseId], references: [id])
-  LessonImage    LessonImage[]
-  LessonVideo    LessonVideo[]
-  IsIntroduction Boolean?      @default(false)
+  id              Int               @id @default(autoincrement())
+  title           String
+  desc            String?           @db.LongText
+  courseId        Int
+  Course          Course            @relation(fields: [courseId], references: [id])
+  LessonImage     LessonImage[]
+  LessonVideo     LessonVideo[]
+  IsIntroduction  Boolean?          @default(false)
+  CompletedLesson CompletedLesson[]
 }
 
 model LessonVideo {
@@ -149,16 +171,6 @@ model LessonImage {
   path     String
   lessonId Int
   Lesson   Lesson @relation(fields: [lessonId], references: [id])
-}
-
-model Enrollment {
-  id       Int      @id @default(autoincrement())
-  date     DateTime
-  courseId Int
-  userId   Int
-  progress Int      @default(0)
-  course   Course   @relation(fields: [courseId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
 }
 
 model Payment {

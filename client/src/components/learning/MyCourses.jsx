@@ -11,14 +11,13 @@ import {
 } from "@material-tailwind/react";
 
 import { useNavigate } from "react-router-dom";
-
 import { Link } from "react-router-dom";
-
 import { useUserContext } from "../../context/UserContext";
 import api from "../pages/api";
 import { setCourseData } from "../../redux/Courselice";
-
 import { useDispatch } from "react-redux";
+
+import AttentionDialog from "../pages/Profile/AttentionDialog";
 
 function MyCourses() {
   const navigate = useNavigate();
@@ -27,7 +26,14 @@ function MyCourses() {
   const { userInfo } = useUserContext();
   const userId = userInfo.id;
   const [FetchCourses, setFetchCourses] = useState([]);
-  console.log(FetchCourses);
+  const { completedEnrollement } = useUserContext();
+  const [idDeleted, setidDeleted] = useState();
+
+  const [openAttentionDrawer, setOpenAttentionDrawer] = React.useState(false);
+
+  const handleOpenAttentionDrawer = () =>
+    setOpenAttentionDrawer(!openAttentionDrawer);
+
   useEffect(() => {
     try {
       api.get(`/enroll/getEnrollDetails/${userId}`).then((res) => {
@@ -52,6 +58,16 @@ function MyCourses() {
       </Link>
     </Breadcrumbs>
   );
+
+  const Delete = async (CourseId) => {
+    try {
+      await api.delete(`/enroll/deleteEnroll/${userId}/${CourseId}`);
+      handleOpenAttentionDrawer();
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const CourseCard = ({ course }) => {
     return (
@@ -91,17 +107,26 @@ function MyCourses() {
         <CardFooter className="pt-0 flex items-center justify-between">
           <Button
             ripple={false}
-            variant="gradient"
+            variant={`${
+              completedEnrollement.find(
+                (enroll) => enroll.courseId === course.id
+              )
+                ? "outlined"
+                : "filled"
+            }`}
             className="capitalize hover:shadow-none"
             color="green"
             size="sm"
             onClick={() => {
               dispatch(setCourseData({ course: course }));
-              console.log({course : course});
               navigate("/learn/course");
             }}
           >
-            Continue your learning
+            {!completedEnrollement.find(
+              (enroll) => enroll.courseId === course.id
+            )
+              ? "continue your learn"
+              : "Course completed"}
           </Button>
           <Button
             ripple={false}
@@ -109,7 +134,10 @@ function MyCourses() {
             color="red"
             className="capitalize hover:shadow-none"
             size="sm"
-            //   onClick={handleCardClick}
+            onClick={() => {
+              handleOpenAttentionDrawer();
+              setidDeleted(course.id);
+            }}
           >
             unenroll
           </Button>
@@ -126,6 +154,13 @@ function MyCourses() {
           FetchCourses.length > 0 &&
           FetchCourses.map((c) => <CourseCard course={c.course} />)}
       </div>
+      <AttentionDialog
+        openAttentionDrawer={openAttentionDrawer}
+        handleOpenAttentionDrawer={handleOpenAttentionDrawer}
+        Delete={Delete}
+        idDeleted={idDeleted}
+        name="course"
+      />
     </>
   );
 }

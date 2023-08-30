@@ -26,9 +26,27 @@ import api from "../../pages/api";
 import axios from "axios";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 
+import AttentionDialog from "../../pages/Profile/AttentionDialog";
+
 function CourseCard(props) {
   const { id, course } = props;
   const dispatch = useDispatch();
+
+  const [openAttentionDrawer, setOpenAttentionDrawer] = useState(false);
+  const [idDeleted, setidDeleted] = useState();
+
+  const handleOpenAttentionDrawer = () =>
+    setOpenAttentionDrawer(!openAttentionDrawer);
+
+  const Delete = async (CourseId) => {
+    try {
+      await api.delete(`/courses/deleteCourse/${CourseId}`);
+      handleOpenAttentionDrawer();
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleCardClick = () => {
     dispatch(setCourseData({ id, course }));
@@ -74,11 +92,17 @@ function CourseCard(props) {
                 <EllipsisVerticalIcon className="h-5 w-5 hover:cursor-pointer" />
               </MenuHandler>
               <MenuList>
-                <MenuItem className="flex items-center">
+                {/* <MenuItem className="flex items-center">
                   <PencilIcon className="h-4 w-4 mr-2" />
                   <span className="">Edit</span>
-                </MenuItem>
-                <MenuItem className="flex items-center">
+                </MenuItem> */}
+                <MenuItem
+                  className="flex items-center"
+                  onClick={() => {
+                    handleOpenAttentionDrawer();
+                    setidDeleted(course.id);
+                  }}
+                >
                   <TrashIcon color="red" className="h-4 w-4 mr-2" />
                   <span className="text-red-500">Delete</span>
                 </MenuItem>
@@ -154,6 +178,13 @@ function CourseCard(props) {
           </div>
         </CardFooter>
       </Card>
+      <AttentionDialog
+        openAttentionDrawer={openAttentionDrawer}
+        handleOpenAttentionDrawer={handleOpenAttentionDrawer}
+        Delete={Delete}
+        idDeleted={idDeleted}
+        name="course"
+      />
     </>
   );
 }

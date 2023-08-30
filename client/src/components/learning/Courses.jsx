@@ -53,7 +53,7 @@ function Courses() {
   return (
     <div className="h-full w-full flex flex-wrap gap-3 mx-4 my-1">
       <Swiper
-        spaceBetween={50}
+        spaceBetween={500}
         slidesPerView={3}
         modules={[Navigation]}
         navigation={true}

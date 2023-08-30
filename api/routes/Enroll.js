@@ -164,4 +164,95 @@ router.get("/getEnrollDetails/:userId", async (req, res) => {
   }
 });
 
+// delete a enrollement record of a user from a course
+
+router.delete("/deleteEnroll/:userId/:CourseId", async (req, res) => {
+  try {
+    const { userId, CourseId } = req.params;
+
+    const enrollment = await prisma.enrollment.findMany({
+      where: {
+        userId: parseInt(userId),
+        courseId: parseInt(CourseId),
+      },
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ error: "Enrollment not found" });
+    }
+    const completedLesson = await prisma.completedLesson.deleteMany({
+      where: {
+        enrollementId: enrollment.id,
+      },
+    });
+
+    const enroll = await prisma.enrollment.deleteMany({
+      where: {
+        userId: parseInt(userId),
+        courseId: parseInt(CourseId),
+      },
+    });
+    console.log(enroll);
+
+    return res.json(enroll);
+  } catch (error) {
+    console.error("Error deleting enrollment:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// update isCompleted field of a enrollment record to true
+
+router.put("/updateEnroll/:userId/:CourseId", async (req, res) => {
+  try {
+    const { userId, CourseId } = req.params;
+
+    const enrollment = await prisma.enrollment.findMany({
+      where: {
+        userId: parseInt(userId),
+        courseId: parseInt(CourseId),
+      },
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ error: "Enrollment not found" });
+    }
+
+    const enroll = await prisma.enrollment.updateMany({
+      where: {
+        userId: parseInt(userId),
+        courseId: parseInt(CourseId),
+      },
+      data: {
+        isCompleted: true,
+      },
+    });
+
+    return res.json(true);
+  } catch (error) {
+    console.error("Error updating enrollment:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// get all enrollement with iscompleted true
+
+router.get("/getCompletedEnroll/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const enrollments = await prisma.enrollment.findMany({
+      where: {
+        userId: parseInt(userId),
+        isCompleted: true,
+      },
+    });
+
+    return res.json(enrollments);
+  } catch (error) {
+    console.error("Error getting enrollments:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
