@@ -25,6 +25,8 @@ import useFetchData from "../../../hooks/useFetchData";
 import { useDispatch, useSelector } from "react-redux";
 
 import { addProduct } from "../../../redux/cartRedux";
+import { addproduct } from "../../../redux/ProductSlice";
+import { Link } from "react-router-dom";
 
 function Products() {
   const [ImgUrl, setImgUrl] = useState([]);
@@ -108,33 +110,39 @@ function Products() {
     };
   }, []);
 
-  const MoreDetails_btn = (
-    <Button
-      ripple={false}
-      className="flex items-center gap-1 bg-blue-gray-900/10 text-blue-gray-900 max-w-max shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-    >
-      More Details
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        strokeWidth={2}
-        stroke="currentColor"
-        className="h-4 w-4"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-        />
-      </svg>
-    </Button>
-  );
+  const MoreDetailsButton = (props) => {
+    const { id, product } = props;
+    return (
+      <Link to={`/products/${id}`}>
+        <Button
+          ripple={false}
+          className="flex items-center gap-1 bg-blue-gray-900/10 text-blue-gray-900 max-w-max shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
+          onClick={() => dispatch(addproduct(product))}
+        >
+          More Details
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-4 w-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+            />
+          </svg>
+        </Button>
+      </Link>
+    );
+  };
 
   const CardProduct = (props) => {
-    const { id, image, name, price } = props;
+    const { id, image, name, price, desc, category } = props;
 
-    const product = { id, image, name, price };
+    const product = { id, image, name, price, desc , category };
 
     const handleClick = () => {
       dispatch(addProduct(product));
@@ -174,7 +182,7 @@ function Products() {
           >
             <ShoppingCartIcon className="h-6 w-6" />
           </Button>
-          {MoreDetails_btn}
+          <MoreDetailsButton id={id} product={product} />
         </CardFooter>
       </Card>
     );
@@ -209,7 +217,7 @@ function Products() {
       </Card>
     );
   };
-  
+
   const HeroSection = (
     <div className="bg-BrownLight h-32 flex items-center justify-center border-b-[2px] border-solid border-BrownDark">
       <Typography variant="h2" className="text-BrownDark">
@@ -268,7 +276,12 @@ function Products() {
           ripple={false}
           className="flex gap-1 items-center"
           color="gray"
-          onClick={() => setClicked(!clicked)}
+          onClick={() => {
+            setSelectedCategory(null);
+            setSearchQuery("");
+            setMaxPrice(null);
+            setClicked(false);
+          }}
         >
           <span>see all products</span>
           <ArrowLongRightIcon className="h-5 w-5" />
@@ -300,6 +313,7 @@ function Products() {
               desc={product.desc}
               price={product.price}
               name={product.name}
+              category={product.category.name}
             />
           ))
         )}

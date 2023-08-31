@@ -3,36 +3,27 @@ import { Link } from "react-router-dom";
 function Missing() {
   return (
     <div>
-      <div className="lg:px-24 lg:py-24 md:py-20 md:px-44 px-4 py-24 items-center flex justify-center flex-col-reverse lg:flex-row md:gap-28 gap-16">
-        <div className="xl:pt-24 w-full xl:w-1/2 relative pb-12 lg:pb-0">
-          <div className="relative">
-            <div className="absolute">
-              <div className>
-                <h1 className="my-2 text-gray-800 font-bold text-2xl">
-                  Looks like you've found the doorway to the great nothing
-                </h1>
-                <p className="my-2 text-gray-800">
-                  Sorry about that! Please visit our hompage to get where you
-                  need to go.
-                </p>
-                <Link to="/" replace={true}>
-                  <button className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 text-center bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-700 focus:ring-opacity-50">
-                    Take me there!
-                  </button>
-                </Link>
-              </div>
-            </div>
-            <div>
-              <img src="https://i.ibb.co/G9DC8S0/404-2.png" />
-            </div>
+      <>
+        <main className="h-screen w-full flex flex-col justify-center items-center bg-[#1A2238]">
+          <h1 className="text-9xl font-extrabold text-white tracking-widest">
+            404
+          </h1>
+          <div className="bg-[#FF6A3D] px-2 text-sm rounded rotate-12 absolute">
+            Page Not Found
           </div>
-        </div>
-        <div>
-          <img src="https://i.ibb.co/ck1SGFJ/Group.png" />
-        </div>
-      </div>
+          <button className="mt-5">
+            <div className="relative inline-block text-sm font-medium text-[#FF6A3D] group active:text-orange-500 focus:outline-none focus:ring">
+              <span className="absolute inset-0 transition-transform translate-x-0.5 translate-y-0.5 bg-[#FF6A3D] group-hover:translate-y-0 group-hover:translate-x-0" />
+              <span className="relative block px-8 py-3 bg-[#1A2238] border border-current">
+                <Link to="/">Go Home</Link>
+              </span>
+            </div>
+          </button>
+        </main>
+      </>
     </div>
   );
 }
 
 export default Missing;
+

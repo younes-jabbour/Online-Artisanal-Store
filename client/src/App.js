@@ -28,6 +28,7 @@ import Concel from "./components/payment/Concel";
 import Courses from "./components/learning/Courses";
 import CoursePage from "./components/learning/CoursePage";
 import MyCourses from "./components/learning/MyCourses";
+import SingleProductPage from "./components/pages/Store/SingleProductPage";
 
 function App() {
   const customTheme = {
@@ -90,6 +91,7 @@ function App() {
               </Route>
               {/* public routes */}
               <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<SingleProductPage />} />
               <Route path="/learn" element={<LearnPage />} />
               <Route path="/learn/course" element={<CoursePage />} />
             </Route>

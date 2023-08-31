@@ -27,6 +27,7 @@ model User {
   Enrollment Enrollment[]
   Product    Product[]
   Course     Course[]
+  Comment    Comment[]
 }
 
 model Category {
@@ -102,6 +103,18 @@ model Product {
   imageId    Int?        @unique
   image      Image?      @relation(fields: [imageId], references: [id])
   OrderItems OrderItem[]
+  Comment    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String   @db.MediumText
+  date      DateTime
+  productId Int
+  Product   Product  @relation(fields: [productId], references: [id])
+  userId    Int
+  User      User     @relation(fields: [userId], references: [id])
+  rate      Int
 }
 
 model Order {
@@ -130,7 +143,7 @@ model Enrollment {
   courseId        Int
   userId          Int
   progress        Int               @default(0)
-  isCompleted     Boolean?           @default(false)
+  isCompleted     Boolean?          @default(false)
   course          Course            @relation(fields: [courseId], references: [id])
   user            User              @relation(fields: [userId], references: [id])
   CompletedLesson CompletedLesson[]

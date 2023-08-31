@@ -102,6 +102,11 @@ router.get("/", async (req, res) => {
             path: true,
           },
         },
+        category: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     res.status(200).json({ products });
@@ -110,8 +115,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Error getting products" });
   }
 });
-
-
 
 // delete a specific product
 router.delete("/delete/:id", async (req, res) => {
@@ -222,6 +225,94 @@ router.put("/update/:id", upload.single("product_img"), async (req, res) => {
   } catch (error) {
     console.error("Error updating product:", error);
     res.status(500).json({ error: "Error updating product" });
+  }
+});
+
+router.post("/comment/:idProduct/:idUser", async (req, res) => {
+  const idProduct = req.params.idProduct;
+  const idUser = req.params.idUser;
+  const { text, rate } = req.body;
+  try {
+    const createdComment = await prisma.comment.create({
+      data: {
+        text: text,
+        productId: parseInt(idProduct),
+        userId: parseInt(idUser),
+        rate: parseInt(rate),
+        date: new Date(),
+      },
+    });
+    res
+      .status(200)
+      .json({ message: "Comment created successfully", createdComment });
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    res.status(500).json({ error: "Error creating comment" });
+  }
+});
+
+router.get("/comment/:idProduct", async (req, res) => {
+  const idProduct = req.params.idProduct;
+  try {
+    const comments = await prisma.comment.findMany({
+      where: {
+        productId: parseInt(idProduct),
+      },
+      include: {
+        User: {
+          select: {
+            id: true,
+            name: true,
+            ImgUrl: true,
+          },
+        },
+      },
+    });
+    res.status(200).json({ comments });
+  } catch (error) {
+    console.error("Error getting comments:", error);
+    res.status(500).json({ error: "Error getting comments" });
+  }
+});
+
+// delete the comment of a specific user of a specific product
+
+router.delete("/comment/delete/:idComment", async (req, res) => {
+  const idComment = req.params.idComment;
+  try {
+    const deletedComment = await prisma.comment.delete({
+      where: {
+        id: parseInt(idComment),
+      },
+    });
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    res.status(500).json({ error: "Error deleting comment" });
+  }
+});
+
+// update the comment of a specific user of a specific product
+
+router.put("/comment/update/:idProduct/:idUser", async (req, res) => {
+  const idProduct = req.params.idProduct;
+  const idUser = req.params.idUser;
+  const { text, rate } = req.body;
+  try {
+    const updatedComment = await prisma.comment.update({
+      where: {
+        productId: parseInt(idProduct),
+        userId: parseInt(idUser),
+      },
+      data: {
+        text: text,
+        rate: parseInt(rate),
+      },
+    });
+    res.status(200).json({ message: "Comment updated successfully" });
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    res.status(500).json({ error: "Error updating comment" });
   }
 });
 

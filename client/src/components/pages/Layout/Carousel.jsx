@@ -32,7 +32,6 @@ function Hero() {
       try {
         await axios.get("http://localhost:5000/product/").then((res) => {
           setTreeProducts(res.data.products);
-          console.log(res.data.products);
         });
       } catch (error) {
         console.error("Error fetching tree products:", error);
@@ -42,9 +41,8 @@ function Hero() {
     fetchTreeProducts();
   }, []);
 
-  const HandleClick = () => {
-    setQuantity(quantity + 1);
-    dispatch(addProduct({ quantity: quantity }));
+  const HandleClick = (pdt) => {
+    dispatch(addProduct(pdt));
   };
 
   const heroSection = (
@@ -74,7 +72,14 @@ function Hero() {
     </div>
   );
 
-  const CardProducts = ({product}) => {
+  const CardProducts = ({ product }) => {
+    const PRODUCT = {
+      id: product.id,
+      image: product.image.path,
+      name: product.name,
+      price: product.price,
+    };
+
     return (
       <>
         <Card shadow={true} className="w-96">
@@ -99,12 +104,12 @@ function Hero() {
               color="gray"
               className="font-normal opacity-75"
             >
-              {product.desc.substring(0,50) + "..."}
+              {product.desc.substring(0, 50) + "..."}
             </Typography>
           </CardBody>
           <CardFooter className="pt-0">
             <Button
-              onClick={HandleClick}
+              onClick={() => HandleClick(PRODUCT)}
               ripple={false}
               fullWidth={true}
               className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
@@ -117,26 +122,18 @@ function Hero() {
     );
   };
 
-
-
   const BestSells = (
     <div className="border-2 border-solid  pb-28 bg-orange-50">
       <Typography variant="h2" className="my-10 text-BrownDark text-center">
         Our best sells
       </Typography>
       <div className="mx-12 flex gap-4 justify-center flex-wrap ">
-        {TreeProducts && TreeProducts.length > 0 && 
-        
-        TreeProducts.map((product) => (
-          <CardProducts product={product} />
-        ))
-
-        }
+        {TreeProducts &&
+          TreeProducts.length > 0 &&
+          TreeProducts.map((product) => <CardProducts product={product} />)}
       </div>
     </div>
   );
-
-  
 
   const ArtisanAvatars = (
     <div className="flex items-center -space-x-4">

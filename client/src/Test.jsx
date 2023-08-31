@@ -7,14 +7,8 @@ import { useUserContext } from "./context/UserContext";
 import { useDispatch, useSelector } from "react-redux";
 
 const Test = () => {
-  const { userInfo } = useUserContext();
-
-  const [Enrollement, setEnrollement] = useState([]);
-
-  const { course } = useSelector((state) => state.course);
-
-  console.log(course);
-
+  const [ktaba, setktaba] = useState("");
+  console.log(ktaba);
   // useEffect(() => {
   //   if (userInfo.IsConnected) {
   //     api
@@ -28,9 +22,13 @@ const Test = () => {
   // }, []);
 
   return (
-    <>
-      <div>Hello this is test page</div>
-    </>
+    <div className="w-96 mt-10">
+      <Input
+        label="test"
+        value={ktaba}
+        onChange={(e) => setktaba(e.target.value)}
+      />
+    </div>
   );
 };
 

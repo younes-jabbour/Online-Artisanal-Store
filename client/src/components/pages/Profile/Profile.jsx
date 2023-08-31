@@ -71,7 +71,6 @@ function Profile() {
   const [desc, setDesc] = useState("");
   const [image, setImage] = useState(null);
   const [categoryId, setCategoryId] = useState("");
-
   //users update info
 
   const [disabled, setDisabled] = useState(true);
@@ -160,6 +159,13 @@ function Profile() {
         headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
+      // clear form inputs
+      setName("");
+      setPrice("");
+      setDesc("");
+      setImage(null);
+      setCategoryId("");
+      // close dialog
       handleOpen();
     } catch (error) {
       console.log(error);
@@ -244,25 +250,25 @@ function Profile() {
 
   const side_bar_user = (
     <Card className="h-fit w-full  rounded-none max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
-    <div className="mb-2 p-4">
-      <Typography variant="h5" color="blue-gray">
-        menu
-      </Typography>
-    </div>
-    <List>
-      <Link to="/profile/my_courses">
-        {" "}
-        {/* to="/profile/my_courses" TO DO NOW ... */}
-        <ListItem>
-          <ListItemPrefix>
-            <ComputerDesktopIcon className="h-5 w-5 " />
-          </ListItemPrefix>
-          My Courses
-        </ListItem>
-      </Link>
-    </List>
-  </Card>
-  )
+      <div className="mb-2 p-4">
+        <Typography variant="h5" color="blue-gray">
+          menu
+        </Typography>
+      </div>
+      <List>
+        <Link to="/profile/my_courses">
+          {" "}
+          {/* to="/profile/my_courses" TO DO NOW ... */}
+          <ListItem>
+            <ListItemPrefix>
+              <ComputerDesktopIcon className="h-5 w-5 " />
+            </ListItemPrefix>
+            My Courses
+          </ListItem>
+        </Link>
+      </List>
+    </Card>
+  );
 
   const Dialog_cpt = (
     <>
@@ -289,7 +295,9 @@ function Profile() {
               <Select
                 size="lg"
                 label="Select a categorie here"
-                onChange={(value) => setCategoryId(value)}
+                onChange={(value) => {
+                  setCategoryId(value);
+                }}
               >
                 {categories.map((category) => (
                   <Option value={category.id} children={category.name}></Option>
@@ -486,7 +494,7 @@ function Profile() {
             <div className=" h-fit grid grid-cols-[300px_1fr]">
               <div>{side_bar_user}</div>
               {Selected === 1 && inputs}
-              </div>
+            </div>
           )}
         </>
       ) : (
