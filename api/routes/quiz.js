@@ -16,29 +16,24 @@ router.post("/NewQuiz/:id", async (req, res) => {
     },
   });
 
-  await Promise.all(
-    questions.map(async (question) => {
-      const createdQuestion = await prisma.question.create({
+  for (const questionData of questions) {
+    const createdQuestion = await prisma.question.create({
+      data: {
+        text: questionData.text,
+        quizId: quiz.id,
+      },
+    });
+
+    for (const optionData of questionData.options) {
+      await prisma.option.create({
         data: {
-          text: question.text,
-          quizId: quiz.id,
+          text: optionData.text,
+          IsCorrect: optionData.isCorrect,
+          questionId: createdQuestion.id,
         },
-      });
-
-      await Promise.all(
-        question.options.map(async (option) => {
-          await prisma.option.create({
-            data: {
-              text: option.text,
-              IsCorrect: option.isCorrect,
-              questionId: createdQuestion.id,
-            },
-          });
-        })
-      );
-    })
-  );
-
+      }); 
+    }
+  }
   res.status(200).json({ message: "Quiz created successfully" });
 });
 

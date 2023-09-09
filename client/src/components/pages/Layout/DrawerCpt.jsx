@@ -49,16 +49,16 @@ function ShoppingCart() {
 const OrderCard = ({ item }) => {
   const dispatch = useDispatch();
   return (
-    <Card className="max-w-[26rem] max-h-[110px] p-0 flex-row ">
+    <Card className="max-w-[30rem] max-h-[140px] flex flex-row">
       <CardHeader
         shadow={false}
         floated={false}
-        className="m-0 w-2/5 shrink-0 rounded-r-none"
+        className="w-2/5 shrink-0 rounded-r-none"
       >
         <img
           src={item.image}
           alt="card_image"
-          className="h-full m-0 w-full object-cover"
+          className="h-full w-full object-cover"
         />
       </CardHeader>
       <CardBody className="m-0 pt-1 flex flex-col justify-between">
@@ -163,8 +163,8 @@ export function DrawerCpt({ props }) {
           </IconButton>
         </div>
         {/* overflow-scroll */}
-        <div className="h-screen  grid m-0 p-0 grid-cols-2 overflow-y-auto">
-          <div className="flex flex-row flex-wrap   overflow-y-auto">
+        <div className="h-screen grid grid-cols-2 overflow-y-auto">
+          <div className="flex flex-row flex-wrap m-0 p-0 gap-0 overflow-y-auto">
             <ShoppingCart />
           </div>
           {cartItems.length > 0 && (

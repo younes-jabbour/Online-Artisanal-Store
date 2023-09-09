@@ -6,19 +6,19 @@ import {
   CardFooter,
   Typography,
   Button,
-  Switch,
   Chip,
   Avatar,
-  Carousel,
 } from "@material-tailwind/react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
+import { Virtual } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
+import "swiper/css/virtual";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setCourseData } from "../../redux/Courselice";
 
 import { useUserContext } from "../../context/UserContext";
@@ -28,8 +28,7 @@ function Courses() {
 
   const [courses, setCourses] = useState([]);
 
-  const { userInfo, Enrollement } = useUserContext();
-  // const [isEnrolled, setisEnrolled] = useState(false);
+  const { userInfo } = useUserContext();
 
   const userId = userInfo.id;
 
@@ -53,11 +52,12 @@ function Courses() {
   return (
     <div className="h-full w-full flex flex-wrap gap-3 mx-4 my-1">
       <Swiper
-        spaceBetween={500}
+        modules={[Virtual]}
+        spaceBetween={50}
         slidesPerView={3}
-        modules={[Navigation]}
-        navigation={true}
+        navigation
         className="mySwiper"
+        virtual
       >
         {courses &&
           courses.map((course) => (
@@ -71,28 +71,28 @@ function Courses() {
                   />
                 </CardHeader>
                 <CardBody>
+                  <Chip
+                    variant="ghost"
+                    className="w-fit h-fit mb-3"
+                    color={
+                      course.category.name === "Wicker"
+                        ? "green"
+                        : course.category.name === "leather"
+                        ? "orange"
+                        : course.category.name === "The dinaderie"
+                        ? "red"
+                        : course.category.name === "carpets"
+                        ? "orange"
+                        : course.category.name === "Ceramics and pottery"
+                        ? "purple"
+                        : "gray"
+                    }
+                    value={course.category.name}
+                  />
                   <div className="flex justify-between mb-3">
                     <Typography variant="h5" color="blue-gray" className="mb-2">
                       {course.title}
                     </Typography>
-                    <Chip
-                      variant="ghost"
-                      className="w-fit"
-                      color={
-                        course.category.name === "Wicker"
-                          ? "green"
-                          : course.category.name === "leather"
-                          ? "orange"
-                          : course.category.name === "The dinaderie"
-                          ? "red"
-                          : course.category.name === "carpets"
-                          ? "orange"
-                          : course.category.name === "Ceramics and pottery"
-                          ? "purple"
-                          : "gray"
-                      }
-                      value={course.category.name}
-                    />
                   </div>
                   <div className="mx-5 flex items-center gap-4">
                     <Avatar
@@ -148,7 +148,7 @@ function Courses() {
                             course: course,
                           })
                         );
-                        console.log({ course: course })
+                        console.log({ course: course });
                       }}
                       className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
                     >

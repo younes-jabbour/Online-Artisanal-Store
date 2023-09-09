@@ -29,6 +29,8 @@ import { PublicApi } from "../api";
 import { useUserContext } from "../../../context/UserContext";
 import moment from "moment";
 import AttentionDialog from "../Profile/AttentionDialog";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 function SingleProductPage() {
   const { id } = useParams();
@@ -123,7 +125,14 @@ function SingleProductPage() {
                   variant="ghost"
                   className="w-fit mb-8"
                 />
-                <p className="p-2">{product.desc}</p>
+                {/* <p className="p-2">{product.desc}</p> */}
+                <div className="mr-[5rem] mb-[1rem]">
+                  <ReactQuill
+                    value={product.desc}
+                    readOnly={true}
+                    theme={"bubble"}
+                  />
+                </div>
                 <div className="flex justify-between items-center mb-6 ">
                   <Chip
                     value={`${product.price} $`}
@@ -179,10 +188,12 @@ function SingleProductPage() {
                               {singleComment.User.name}
                             </Typography>
                             <div className="5 flex items-center gap-0">
-                              <Rating
-                                value={parseInt(singleComment.rate)}
-                                readonly
-                              />
+                              {parseInt(singleComment.rate) > 0 && (
+                                <Rating
+                                  value={parseInt(singleComment.rate)}
+                                  readonly
+                                />
+                              )}
                             </div>
                           </div>
                           <div className="flex justify-between">
@@ -232,7 +243,7 @@ function SingleProductPage() {
               <div className=" flex gap-2">
                 <div className="flex w-full max-w-[28rem] ">
                   <Textarea
-                    label="comment"
+                    // label="comment"
                     color="gray"
                     value={comment}
                     containerProps={{

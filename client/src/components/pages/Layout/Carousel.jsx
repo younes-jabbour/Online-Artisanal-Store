@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Carousel,
   Typography,
@@ -11,9 +12,10 @@ import {
 } from "@material-tailwind/react";
 import { addProduct } from "../../../redux/cartRedux";
 import { useDispatch } from "react-redux";
-
-import api from "../../pages/api";
 import axios from "axios";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
+import { ArrowLongRightIcon } from "@heroicons/react/24/solid";
 
 const urls = [
   "http://localhost:5000/images/1.jpeg",
@@ -30,9 +32,11 @@ function Hero() {
   useEffect(() => {
     const fetchTreeProducts = async () => {
       try {
-        await axios.get("http://localhost:5000/product/").then((res) => {
-          setTreeProducts(res.data.products);
-        });
+        await axios
+          .get("http://localhost:5000/product/first/tree")
+          .then((res) => {
+            setTreeProducts(res.data.products);
+          });
       } catch (error) {
         console.error("Error fetching tree products:", error);
       }
@@ -99,13 +103,19 @@ function Hero() {
                 ${product.price}
               </Typography>
             </div>
-            <Typography
+            {/* <Typography
               variant="small"
               color="gray"
               className="font-normal opacity-75"
             >
               {product.desc.substring(0, 50) + "..."}
-            </Typography>
+            </Typography> */}
+
+            <ReactQuill
+              value={product.desc.substring(0, 50) + "..."}
+              readOnly={true}
+              theme={"bubble"}
+            />
           </CardBody>
           <CardFooter className="pt-0">
             <Button
@@ -199,9 +209,11 @@ function Hero() {
                   impedit iste vero!
                 </Typography>
                 <div className="flex justify-center gap-2">
-                  <Button size="lg" color="white">
-                    Go to Store
-                  </Button>
+                  <Link to="/products">
+                    <Button size="lg" color="white">
+                      Go to Store
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -228,12 +240,11 @@ function Hero() {
                   className="mb-0 opacity-80 "
                 ></Typography>
                 <div className="flex gap-2">
-                  <Button size="lg" color="white">
-                    Explore
-                  </Button>
-                  <Button size="lg" color="white" variant="text">
-                    Gallery
-                  </Button>
+                  <Link to="/products">
+                    <Button size="lg" color="white">
+                      Explore
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -262,9 +273,11 @@ function Hero() {
                   tempora!
                 </Typography>
                 <div className="flex gap-2">
-                  <Button size="lg" color="white" variant="text">
-                    Go to learn
-                  </Button>
+                  <Link to="/learn/List_Courses">
+                    <Button size="lg" color="white" variant="text">
+                      Go to learn
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -276,14 +289,29 @@ function Hero() {
       {BestSells}
 
       <div className="flex flex-wrap justify-center gap-9 lg:grid lg:grid-cols-2 lg:gap-2 h-80  place-items-center place-content-center bg-BrownLight ">
-        <span variant="small" className=" ml-20 font-medium text-base">
-          Step into a world of creativity and craftsmanship with over{" "}
-          <strong>200</strong> skilled Artisans, all dedicated to sharing the
-          enchanting art of handcrafting with
-          <span className="ml-1 border-b-orange-800 border-b-4 border-solid text-BrownDark font-bold text-3xl">
-            You!
+        <div className="ml-20 ">
+          <span variant="small" className=" font-medium text-base">
+            Step into a world of creativity and craftsmanship with over{" "}
+            <strong>200</strong> skilled Artisans, all dedicated to sharing the
+            enchanting art of handcrafting with
+            <span className="ml-1 border-b-orange-800 border-b-4 border-solid text-BrownDark font-bold text-3xl">
+              You!
+            </span>
           </span>
-        </span>
+          <div className="mt-5">
+            <Link to="learn/List_Courses">
+              <Button
+                variant="gradient"
+                color="orange"
+                ripple={false}
+                className="hover:shadow-none mt-10 flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100"
+              >
+                <span>Explore NOW</span>
+                <ArrowLongRightIcon className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
         <div>{ArtisanAvatars}</div>
       </div>
     </>

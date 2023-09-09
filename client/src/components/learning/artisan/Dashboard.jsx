@@ -90,7 +90,7 @@ function Dashboard() {
   );
 
   const side_bar = (
-    <Card className="h-fit w-full rounded max-w-[20rem] p-4 shadow-xl border-[1px] border-solid border-blue-gray-900 shadow-blue-gray-900/5">
+    <Card className="h-fit w-full rounded max-w-[20rem] p-4 shadow-xl  shadow-blue-gray-900/5">
       <List>
         <ListItem
           ripple={false}
@@ -99,16 +99,7 @@ function Dashboard() {
         >
           <ListItemPrefix>{/* icons here */}</ListItemPrefix>
           courses
-          <ListItemSuffix>
-            <Chip
-              value="14"
-              size="sm"
-              variant="ghost"
-              color="blue-gray"
-              s
-              className="rounded-full"
-            />
-          </ListItemSuffix>
+          <ListItemSuffix></ListItemSuffix>
         </ListItem>
         <ListItem
           ripple={false}
@@ -264,7 +255,6 @@ function Dashboard() {
   );
   return (
     <>
-      <Header />
       {BreadcrumbsCpt}
       <div className="mt-3 flex gap-2 mb-[10rem]">
         {side_bar}

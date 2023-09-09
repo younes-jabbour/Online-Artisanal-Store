@@ -16,6 +16,8 @@ function Quiz(props) {
     { text: "", options: [{ text: "", isCorrect: false }] },
   ]);
 
+  console.log(questions);
+
   const id = props.courseId;
 
   const updateQuestionText = (text, questionIndex) => {
@@ -164,6 +166,7 @@ function Quiz(props) {
                     <input
                       type="checkbox"
                       className="w-3 h-3 to-green-400"
+                      // name={`correctOption_${questionIndex}`}
                       checked={option.isCorrect}
                       onChange={() =>
                         toggleCorrectOption(questionIndex, optionIndex)

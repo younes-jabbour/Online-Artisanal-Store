@@ -247,9 +247,9 @@ export default function Register() {
               7irafi
             </span>
           </div>
-          <div className="typing-demo ">
+          <Typography variant="small" className="mt-5 font-bold border-solid border-l-8 pl-4 text-end border-l-orange-500 uppercase">
             where you can discover the world of traditional craftsmanship
-          </div>
+          </Typography>
         </div>
       </div>
     </div>

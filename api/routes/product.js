@@ -116,9 +116,55 @@ router.get("/", async (req, res) => {
   }
 });
 
+// get the first tree products
+router.get("/first/tree", async (req, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      skip: 0,
+      take: 3,
+      include: {
+        image: {
+          select: {
+            path: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    res.status(200).json({ products });
+  } catch (error) {
+    console.error("Error getting products:", error);
+    res.status(500).json({ error: "Error getting products" });
+  }
+});
+
 // delete a specific product
 router.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
+
+  const Productfounded = await prisma.product.findFirst({
+    where: {
+      id: parseInt(id),
+    },
+    include: {
+      Comment: true,
+    },
+  });
+
+  if (!Productfounded)
+    return res.status(400).json({ error: "Product not found" });
+
+  if (Productfounded.Comment.length > 0) {
+    await prisma.comment.deleteMany({
+      where: {
+        productId: parseInt(id),
+      },
+    }); // delete all comments of this product
+  }
 
   try {
     const deletedProduct = await prisma.product.delete({

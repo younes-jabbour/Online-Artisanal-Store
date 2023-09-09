@@ -74,8 +74,8 @@ function CoursePage() {
             .then((res) => {
               setTimeout(() => {
                 window.location.reload();
-              });
-            }, 2000);
+              }, 500);
+            });
         }
       } catch (error) {
         console.log("Error submitting quiz:", error);
@@ -816,7 +816,7 @@ function CoursePage() {
       {!isEnrolled && LockedAccordion}
       {FecthCourse &&
         FecthCourse.map((lesson) => <LessonAccordion lesson={lesson} />)}
-      {!QuizFetched && QuizLockedAccordion}
+      {!QuizFetched && FecthCourse.lenght > 0 && QuizLockedAccordion}
       {QuizFetched && QuizAccordion}
     </div>
   );

@@ -13,8 +13,27 @@ import {
 } from "@material-tailwind/react";
 import useFetchData from "../../../../hooks/useFetchData";
 import api from "../../api";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 function DialogCpt(props) {
+  var toolbarOptions = [
+    ["bold", "italic", "underline", "strike"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ list: "ordered" }, { list: "bullet" }],
+
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+  ];
+  const modules = {
+    toolbar: toolbarOptions,
+  };
+
+
   const { open, handleOpen, info } = props;
 
   const [categories, setCategories] = useState([]);
@@ -89,7 +108,7 @@ function DialogCpt(props) {
       </DialogHeader>
       <DialogBody divider>
         <div className="flex flex-col items-center">
-          <div className="w-72 flex flex-col gap-4">
+          <div className="w-[30rem] flex flex-col gap-4">
             {/* Product name */}
             <Input
               name="name"
@@ -123,12 +142,18 @@ function DialogCpt(props) {
               onChange={(e) => setPrice(e.target.value)}
             />
             {/* Product description */}
-            <Textarea
+            {/* <Textarea
               size="lg"
               label="Add a Description here of the Product"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               name="desc"
+            /> */}
+            <ReactQuill
+              modules={modules}
+              theme="snow"
+              value={desc}
+              onChange={setDesc}
             />
             {/* Product image */}
             <Input

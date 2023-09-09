@@ -23,6 +23,7 @@ import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
+import "./style.css";
 
 function Header() {
   const cart = useSelector((state) => state.cart); // hook from redux
@@ -95,25 +96,19 @@ function Header() {
   const navList = (
     <ul className="mb-4 mt-2 flex flex-col gap-3 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-16">
       <Link to="/">
-        <span          
-          className="p-1 text-gray-800 flex gap-1 items-center font-bold cursor-pointer hover:text-blue-700"
-        >
+        <span className="p-1 text-gray-800 flex gap-1 items-center font-bold cursor-pointer hover:text-blue-700">
           <HomeIcon className="h-4 w-4 to-black" />
           home
         </span>
       </Link>
       <Link to="/products">
-        <span          
-          className="p-1 text-gray-800 flex items-center cursor-pointer gap-1 font-bold lg:text-base  hover:text-blue-700"
-        >
+        <span className="p-1 text-gray-800 flex items-center cursor-pointer gap-1 font-bold lg:text-base  hover:text-blue-700">
           <ShoppingBagIcon className="w-4 h-4" />
           product
         </span>
       </Link>
       <Link to="/learn">
-        <span          
-          className="p-1 text-gray-800 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700"
-        >
+        <span className="p-1 text-gray-800 flex gap-1 items-center cursor-pointer font-bold lg:text-base hover:text-blue-700">
           <BookOpenIcon className="w-4 h-4" />
           learn
         </span>
@@ -168,6 +163,7 @@ function Header() {
             <Typography
               as="a"
               className="mr-4 cursor-pointer text-4xl text-brown-700 py-1.5 font-Rasputin"
+              // className="Header-section"
             >
               7irafi.
             </Typography>

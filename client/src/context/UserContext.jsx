@@ -8,7 +8,7 @@ import React, {
 import jwtDecode from "jwt-decode";
 import api from "../components/pages/api";
 import { useDispatch } from "react-redux";
-
+import { Navigate } from "react-router-dom";
 import { enroll } from "../redux/EnrollSlice";
 
 const UserContext = createContext();
@@ -88,7 +88,7 @@ export const UserProvider = ({ children }) => {
       localStorage.clear();
       setUserInfo({ id: null, type: "none", IsConnected: false });
       setEnrollement([]);
-      // window.location.href = "/";
+      <Navigate to="/" replace={true} />;
     } catch (error) {
       console.error(error);
     }

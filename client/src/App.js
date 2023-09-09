@@ -1,10 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Register from "./components/pages/auth/register/Register";
 import Login from "./components/pages/auth/Login/Login";
 import Home from "./components/pages/Home/Home";
@@ -25,10 +19,11 @@ import Dashboard from "./components/learning/artisan/Dashboard";
 import SinglePageCourse from "./components/learning/artisan/SinglePageCourse";
 import Success from "./components/payment/Success";
 import Concel from "./components/payment/Concel";
-import Courses from "./components/learning/Courses";
 import CoursePage from "./components/learning/CoursePage";
 import MyCourses from "./components/learning/MyCourses";
 import SingleProductPage from "./components/pages/Store/SingleProductPage";
+import ListCoursesPage from "./components/learning/ListCoursesPage";
+import RequireAuthArtisan from "./components/pages/auth/RequireAuthArtisan";
 
 function App() {
   const customTheme = {
@@ -81,34 +76,45 @@ function App() {
             <Route path="/" element={<Layout />}>
               <Route path="/" element={<Home />} />
               {/* private routes require authentication */}
+              {/* authentification required for users */}
               <Route element={<RequireAuth />}>
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/my_courses" element={<MyCourses />} />
+              </Route>
+              {/* authentification required for artisans */}
+              <Route element={<RequireAuthArtisan />}>
                 <Route
                   path="/profile/list_of_products"
                   element={<ListProducts />}
                 />
+                <Route path="/profile/course" element={<Dashboard />} />
               </Route>
+
               {/* public routes */}
               <Route path="/products" element={<Products />} />
               <Route path="/products/:id" element={<SingleProductPage />} />
               <Route path="/learn" element={<LearnPage />} />
+              <Route path="/learn/List_Courses" element={<ListCoursesPage />} />
               <Route path="/learn/course" element={<CoursePage />} />
             </Route>
             {/* without layout */}
-            <Route path="/profile/course" element={<Dashboard />} />
-            <Route
-              path="/profile/course/lessons"
-              element={<SinglePageCourse />}
-            />
+            <Route element={<RequireAuthArtisan />}>
+              <Route path="/profile/course" element={<Dashboard />} />
+              <Route
+                path="/profile/course/lessons"
+                element={<SinglePageCourse />}
+              />
+            </Route>
+            {/* // des routes pour les Tests */}
             <Route path="/post" element={<Post />} />
             <Route path="/test" element={<Test />} />
+
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/anauthorized" element={<Anauthorized />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Concel />} />
-            <Route path="/Courses" element={<Courses />} />
+            {/* <Route path="/Courses" element={<Courses />} /> */}
             <Route path="*" element={<Missing />} />
           </Routes>
         </UserProvider>

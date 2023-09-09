@@ -1,26 +1,7 @@
-import React, { useState, useEffect, createContext } from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Button,
-  Switch,
-  Chip,
-} from "@material-tailwind/react";
-import {
-  // CheckBadgeIconIcon,
-  // CheckIcon,
-  CheckCircleIcon,
-  // XCircleIcon,
-  // ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-} from "@heroicons/react/24/solid";
+import React, { useState, useEffect } from "react";
+
 import api from "../../pages/api";
 import { useUserContext } from "../../../context/UserContext";
-import SinglePageCourse from "./SinglePageCourse";
-import { Link } from "react-router-dom";
 import CourseCard from "./CourseCard";
 
 function ListCourses() {
@@ -44,7 +25,7 @@ function ListCourses() {
     };
   }, []);
   return (
-    <div className="h-full w-full flex flex-wrap gap-1 mx-4 my-1">
+    <div className="h-full w-full flex flex-wrap justify-center gap-1 my-1">
       {Courses.course &&
         Courses.course.map((course) => (
           <CourseCard id={course.id} course={course} />

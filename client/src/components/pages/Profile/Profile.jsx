@@ -34,8 +34,29 @@ import {
 import { useUserContext } from "../../../context/UserContext";
 import { Navigate, Link } from "react-router-dom";
 import useFetchData from "../../../hooks/useFetchData";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 function Profile() {
+  var toolbarOptions = [
+    ["bold", "italic", "underline"], // toggled buttons
+    ["blockquote", "code-block"],
+
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: "ordered" }, { list: "bullet" }],
+
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ["clean"], // remove formatting button
+  ];
+  const modules = {
+    toolbar: toolbarOptions,
+  };
+
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [oldPassword, setoldPassword] = useState(null);
@@ -186,11 +207,6 @@ function Profile() {
     getCategories();
   }, []);
 
-  const handleButtonClick = () => {
-    // Call both functions when the button is clicked
-    handleOpen();
-  };
-
   const handlEyeClick = () => {
     setVisible(!visible);
   };
@@ -211,11 +227,11 @@ function Profile() {
           </ListItemPrefix>
           Profile
         </ListItem>
-        <ListItem selected={Selected === 3} onClick={() => setSelected(3)}>
+        <ListItem onClick={() => handleOpen()}>
           <ListItemPrefix>
             <ShoppingBagIcon className="h-5 w-5" />
           </ListItemPrefix>
-          <span onClick={handleButtonClick}>Create new product</span>
+          <span>Create new product</span>
         </ListItem>
         <Link to="/profile/list_of_products">
           <ListItem>
@@ -235,8 +251,6 @@ function Profile() {
           </ListItem>
         </Link>
         <Link to="/profile/my_courses">
-          {" "}
-          {/* to="/profile/my_courses" TO DO NOW ... */}
           <ListItem>
             <ListItemPrefix>
               <ComputerDesktopIcon className="h-5 w-5 " />
@@ -279,13 +293,14 @@ function Profile() {
           unmount: { scale: 0.9, y: -100 },
         }}
         andler={handleOpen}
+        className="overflow-auto w-[44rem]"
       >
         <DialogHeader className="text-center">
           Create your new product here
         </DialogHeader>
         <DialogBody divider>
           <div className="flex flex-col items-center">
-            <div className="w-72 flex flex-col gap-4">
+            <div className="w-[30rem] flex flex-col gap-4">
               <Input
                 name="name"
                 variant="outlined"
@@ -310,12 +325,18 @@ function Profile() {
                 // value={Inputs.name}
                 onChange={(e) => setPrice(e.target.value)}
               />
-              <Textarea
+              {/* <Textarea
                 size="lg"
                 label="Add a Description here of the Product"
                 value={desc}
                 name="desc"
                 onChange={(e) => setDesc(e.target.value)}
+              /> */}
+              <ReactQuill
+                modules={modules}
+                theme="snow"
+                value={desc}
+                onChange={setDesc}
               />
               <Input
                 size="lg"

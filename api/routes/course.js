@@ -68,6 +68,7 @@ router.get("/getCourse", async (req, res) => {
       include: {
         category: {
           select: {
+            id: true,
             name: true,
           },
         },

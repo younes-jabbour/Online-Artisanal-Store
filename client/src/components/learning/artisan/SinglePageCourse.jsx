@@ -14,7 +14,9 @@ import {
   AccordionBody,
   Button,
   Dialog,
+  DialogHeader,
   DialogBody,
+  DialogFooter,
 } from "@material-tailwind/react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
@@ -47,10 +49,15 @@ function SinglePageCourse() {
   const modules = {
     toolbar: toolbarOptions,
   };
-
+  const [idDeleted, setidDeleted] = useState();
   const [open, setOpen] = React.useState();
   const [openQuiz, setOpenQuiz] = React.useState();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [openAttentionDrawer, setOpenAttentionDrawer] = useState(false);
+  const [name, setname] = useState("");
+
+  const handleOpenAttentionDrawer = () =>
+    setOpenAttentionDrawer(!openAttentionDrawer);
 
   const handleOpenImage = (imagePath) => {
     setSelectedImage(imagePath);
@@ -65,15 +72,15 @@ function SinglePageCourse() {
   const [Lessons, setLessons] = useState([]);
   const [QuizFetch, setQuiz] = useState({});
 
-  // const Intro = Lessons.find((lesson) => lesson.IsIntroduction === true);
-
   const [Intro, setIntro] = useState([]);
-  console.log("intro", Intro);
 
   const handleDeleteLesson = (id) => async () => {
     try {
       await api.delete(`/lesson/DeleteLesson/${id}`).then((res) => {
-        window.location.reload();
+        handleOpenAttentionDrawer();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       });
     } catch (error) {
       console.log(error);
@@ -83,7 +90,9 @@ function SinglePageCourse() {
   const handleDeleteQuiz = (id) => async () => {
     try {
       await api.delete(`/quiz/DeleteQuiz/${id}`).then((res) => {
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       });
     } catch (error) {
       console.log(error);
@@ -156,6 +165,57 @@ function SinglePageCourse() {
     // //make it slow
     // duration: 0.5,
   };
+
+  const AttentionDialog = (
+    <Dialog open={openAttentionDrawer} handler={handleOpenAttentionDrawer}>
+      <DialogHeader>
+        <Typography variant="h5" className=" m-auto" color="blue-gray">
+          Your Attention is Required!
+        </Typography>
+      </DialogHeader>
+      <DialogBody divider className="grid place-items-center gap-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="h-16 w-16 text-red-500"
+        >
+          <path
+            fillRule="evenodd"
+            d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <Typography color="red" className="" variant="h4">
+          You should read this!
+        </Typography>
+        <Typography className="text-center font-normal">
+          Before you proceed, just wanted to make sure you're absolutely sure
+          about deleting the {name}
+        </Typography>
+      </DialogBody>
+      <DialogFooter className="space-x-2">
+        <Button
+          variant="text"
+          color="blue-gray"
+          onClick={handleOpenAttentionDrawer}
+        >
+          close
+        </Button>
+        <Button
+          variant="gradient"
+          color="green"
+          onClick={
+            name === "lesson"
+              ? handleDeleteLesson(idDeleted)
+              : handleDeleteQuiz(idDeleted)
+          }
+        >
+          Ok, i confirme
+        </Button>
+      </DialogFooter>
+    </Dialog>
+  );
 
   const IntroAccordion = (
     <div>
@@ -258,7 +318,12 @@ function SinglePageCourse() {
                   color="red"
                   variant="gradient"
                   className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
-                  onClick={handleDeleteLesson(Intro.id)}
+                  // onClick={handleDeleteLesson(Intro.id)}
+                  onClick={() => {
+                    handleOpenAttentionDrawer();
+                    setidDeleted(Intro.id);
+                    setname("lesson");
+                  }}
                 >
                   <TrashIcon className="h-4 w-4 m-0 p-0" />
                   <span className="font-normal">Delete</span>
@@ -372,7 +437,12 @@ function SinglePageCourse() {
                     color="red"
                     variant="gradient"
                     className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
-                    onClick={handleDeleteLesson(lesson.id)}
+                    // onClick={Delete(lesson.id)}
+                    onClick={() => {
+                      handleOpenAttentionDrawer();
+                      setidDeleted(lesson.id);
+                      setname("lesson");
+                    }}
                   >
                     <TrashIcon className="h-4 w-4 m-0 p-0" />
                     <span className="font-normal">Delete</span>
@@ -501,7 +571,12 @@ function SinglePageCourse() {
               color="red"
               variant="gradient"
               className="mt-10 capitalize mr-10 hover:shadow-none flex gap-1 items-center"
-              onClick={handleDeleteQuiz(QuizFetch.id)}
+              // onClick={handleDeleteQuiz(QuizFetch.id)}
+              onClick={() => {
+                handleOpenAttentionDrawer();
+                setidDeleted(QuizFetch.id);
+                setname("quiz");
+              }}
             >
               <TrashIcon className="h-4 w-4 m-0 p-0" />
               <span className="font-normal">Delete</span>
@@ -555,6 +630,7 @@ function SinglePageCourse() {
         {Selected === 2 && <LessonForm CourseId={id} />}
         {Selected === 3 && <Quiz courseId={id} />}
       </div>
+      {idDeleted && AttentionDialog}
     </>
   );
 }

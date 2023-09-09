@@ -8,8 +8,13 @@ import {
 } from "@material-tailwind/react";
 
 function AttentionDialog(props) {
-  const { openAttentionDrawer, handleOpenAttentionDrawer, Delete, idDeleted , name} =
-    props;
+  const {
+    openAttentionDrawer,
+    handleOpenAttentionDrawer,
+    Delete,
+    idDeleted,
+    name,
+  } = props;
   return (
     <Dialog open={openAttentionDrawer} handler={handleOpenAttentionDrawer}>
       <DialogHeader>

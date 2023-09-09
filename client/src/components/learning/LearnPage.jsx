@@ -2,8 +2,7 @@ import React from "react";
 import { Button, Typography } from "@material-tailwind/react";
 import { ArrowLongRightIcon } from "@heroicons/react/24/outline";
 import Courses from "./Courses";
-
-
+import { Link } from "react-router-dom";
 
 {
   /*
@@ -17,9 +16,6 @@ color4 : #5A3D2B
 }
 
 function LearnPage() {
-
-  
-
   const FirstSection = (
     <div className="bg-BrownLight">
       <div className="flex justify-between items-center py-10 px-5">
@@ -31,21 +27,23 @@ function LearnPage() {
             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Expedita,
             id.
           </h3>
-          <p className="text-gray-600 mt-4">
+          <p className="text-gray-600 mt-4 mr-[2rem]">
             Nuestro programa de fidelización está diseñado para recompensar a
             nuestros clientes más fieles. Obtén puntos con cada compra y
             canjéalos por descuentos exclusivos, regalos especiales y
             experiencias únicas.
           </p>
-          <Button
-            variant="gradient"
-            color="orange"
-            ripple={false}
-            className="hover:shadow-none mt-10 flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100"
-          >
-            <span>Courses</span>
-            <ArrowLongRightIcon className="h-5 w-5" />
-          </Button>
+          <Link to="/learn/List_Courses">
+            <Button
+              variant="gradient"
+              color="orange"
+              ripple={false}
+              className="hover:shadow-none mt-10 flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100"
+            >
+              <span>Courses</span>
+              <ArrowLongRightIcon className="h-5 w-5" />
+            </Button>
+          </Link>
         </div>
         <div className="w-1/2">
           <img
@@ -65,7 +63,6 @@ function LearnPage() {
       </Typography>
     </div>
   );
-
 
   return (
     <div>

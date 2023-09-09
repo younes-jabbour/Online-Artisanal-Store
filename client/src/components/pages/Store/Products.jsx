@@ -13,6 +13,7 @@ import {
   Option,
   Input,
   CardFooter,
+  Chip,
 } from "@material-tailwind/react";
 import img_1 from "../../../assets/categories/carpets.jpeg";
 import img_2 from "../../../assets/categories/ceramic.jpeg";
@@ -22,11 +23,13 @@ import img_5 from "../../../assets/categories/wicker.jpeg";
 import img_6 from "../../../assets/categories/wood.jpeg";
 
 import useFetchData from "../../../hooks/useFetchData";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { addProduct } from "../../../redux/cartRedux";
 import { addproduct } from "../../../redux/ProductSlice";
 import { Link } from "react-router-dom";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.bubble.css";
 
 function Products() {
   const [ImgUrl, setImgUrl] = useState([]);
@@ -39,6 +42,7 @@ function Products() {
   const [maxPrice, setMaxPrice] = useState(null);
   const [clicked, setClicked] = useState(false);
   const [Quantity, setQuantity] = useState(0);
+  const [emptyCategorie, setemptyCategorie] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -142,7 +146,7 @@ function Products() {
   const CardProduct = (props) => {
     const { id, image, name, price, desc, category } = props;
 
-    const product = { id, image, name, price, desc , category };
+    const product = { id, image, name, price, desc, category };
 
     const handleClick = () => {
       dispatch(addProduct(product));
@@ -158,6 +162,24 @@ function Products() {
           />
         </CardHeader>
         <CardBody>
+          <Chip
+            variant="ghost"
+            className="w-fit h-fit mb-3"
+            color={
+              category === "Wicker"
+                ? "green"
+                : category === "leather"
+                ? "orange"
+                : category === "The dinaderie"
+                ? "red"
+                : category === "carpets"
+                ? "orange"
+                : category === "Ceramics and pottery"
+                ? "purple"
+                : "gray"
+            }
+            value={category}
+          />
           <div className="mb-2 flex items-center justify-between">
             <Typography color="blue-gray" className="font-medium">
               {props.name}
@@ -166,13 +188,18 @@ function Products() {
               ${props.price}.00
             </Typography>
           </div>
-          <Typography
+          {/* <Typography
             variant="small"
             color="gray"
             className="font-normal opacity-75"
           >
             {props.desc.substring(0, 100) + "..."}
-          </Typography>
+          </Typography> */}
+          {/* <ReactQuill
+            value={props.desc.substring(0, 100) + "..."}
+            readOnly={true}
+            theme={"bubble"}
+          /> */}
         </CardBody>
         <CardFooter className="pt-0 flex justify-between">
           <Button
@@ -210,9 +237,9 @@ function Products() {
           <Typography variant="h5" className="mb-4 text-gray-400">
             {title}
           </Typography>
-          <Button variant="filled" color="white" size="md">
+          {/* <Button variant="filled" color="white" size="md">
             explore
-          </Button>
+          </Button> */}
         </CardBody>
       </Card>
     );
@@ -239,7 +266,12 @@ function Products() {
         <div className="w-72">
           <Select
             color="blue"
-            onChange={(value) => setSelectedCategory(value)}
+            value={emptyCategorie ? "" : null}
+            onClick={() => setemptyCategorie(false)}
+            onChange={(value) => {
+              setSelectedCategory(value);
+              setemptyCategorie(false);
+            }}
             label="Select categorie"
           >
             {category &&
@@ -281,6 +313,7 @@ function Products() {
             setSearchQuery("");
             setMaxPrice(null);
             setClicked(false);
+            setemptyCategorie(true);
           }}
         >
           <span>see all products</span>

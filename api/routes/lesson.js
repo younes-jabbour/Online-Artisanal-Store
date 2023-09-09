@@ -388,6 +388,12 @@ router.delete("/DeleteLesson/:id", async (req, res) => {
       },
     });
 
+    await prisma.CompletedLesson.deleteMany({
+      where: {
+        lessonId: lessonId,
+      },
+    });
+
     await prisma.lesson.delete({
       where: {
         id: lessonId,
