@@ -337,6 +337,7 @@ function Profile() {
                 theme="snow"
                 value={desc}
                 onChange={setDesc}
+                className="overflow-auto max-h-[9rem]"
               />
               <Input
                 size="lg"

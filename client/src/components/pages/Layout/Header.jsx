@@ -17,11 +17,12 @@ import DrawerCpt from "./DrawerCpt";
 import { Link } from "react-router-dom";
 
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
-import { ShoppingBagIcon } from "@heroicons/react/24/solid";
+import { ShoppingBagIcon  } from "@heroicons/react/24/solid";
 import { HomeIcon } from "@heroicons/react/24/solid";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { UserCircleIcon, PowerIcon } from "@heroicons/react/24/outline";
+
 import { useSelector } from "react-redux";
 import "./style.css";
 

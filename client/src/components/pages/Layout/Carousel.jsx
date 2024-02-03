@@ -9,6 +9,7 @@ import {
   CardBody,
   CardFooter,
   Avatar,
+  Chip,
 } from "@material-tailwind/react";
 import { addProduct } from "../../../redux/cartRedux";
 import { useDispatch } from "react-redux";
@@ -82,6 +83,7 @@ function Hero() {
       image: product.image.path,
       name: product.name,
       price: product.price,
+      category: product.category.name,
     };
 
     return (
@@ -95,6 +97,24 @@ function Hero() {
             />
           </CardHeader>
           <CardBody>
+            <Chip
+              variant="ghost"
+              className="w-fit h-fit mb-4"
+              color={
+                product.category.name === "Wicker"
+                  ? "green"
+                  : product.category.name === "leather"
+                  ? "orange"
+                  : product.category.name === "The dinaderie"
+                  ? "red"
+                  : product.category.name === "carpets"
+                  ? "orange"
+                  : product.category.name === "Ceramics and pottery"
+                  ? "purple"
+                  : "gray"
+              }
+              value={product.category.name}
+            />
             <div className="mb-2 flex items-center justify-between">
               <Typography color="blue-gray" className="font-medium">
                 {product.name}
@@ -110,12 +130,12 @@ function Hero() {
             >
               {product.desc.substring(0, 50) + "..."}
             </Typography> */}
-
+            {/* 
             <ReactQuill
               value={product.desc.substring(0, 50) + "..."}
               readOnly={true}
               theme={"bubble"}
-            />
+            /> */}
           </CardBody>
           <CardFooter className="pt-0">
             <Button
@@ -295,7 +315,7 @@ function Hero() {
             <strong>200</strong> skilled Artisans, all dedicated to sharing the
             enchanting art of handcrafting with
             <span className="ml-1 border-b-orange-800 border-b-4 border-solid text-BrownDark font-bold text-3xl">
-              You!
+              You !
             </span>
           </span>
           <div className="mt-5">

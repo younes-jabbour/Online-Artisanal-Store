@@ -39,7 +39,6 @@ function Courses() {
           .get("http://localhost:5000/courses/getCourse")
           .then((res) => {
             setCourses(res.data.courses);
-            // console.log(res.data.courses);
           });
       } catch (err) {
         console.error(err);
@@ -48,6 +47,23 @@ function Courses() {
 
     FetchCourses();
   }, []);
+
+  const handleEnrollement = async (id) => {
+    if (!userInfo.IsConnected)
+      return window.alert("You must be logged in to enroll in a course");
+    try {
+      await axios
+        .post(`http://localhost:5000/enroll/newEnroll/${userId}`, {
+          courseId: id,
+        })
+        .then((res) => {
+          window.alert("You have successfully enrolled in the course");
+          window.location.reload();
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="h-full w-full flex flex-wrap gap-3 mx-4 my-1">
@@ -122,6 +138,7 @@ function Courses() {
                       variant="gradient"
                       className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
                       size="sm"
+                      onClick={() => handleEnrollement(course.id)}
                     >
                       Enroll now
                     </Button>

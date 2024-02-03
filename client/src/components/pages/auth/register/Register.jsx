@@ -142,7 +142,7 @@ export default function Register() {
               variant="h4"
               className="text-center mb-2 text-BrownDark"
             >
-              Sign Up
+              Sign up
             </Typography>
             <form className="mt-2 mb-2 w-80 max-w-screen-lg sm:w-96">
               <div className="mb-4 flex flex-col gap-3.5 ">
@@ -221,8 +221,7 @@ export default function Register() {
               <Typography color="gray" className="mt-4 text-center font-normal">
                 Already have an account?{" "}
                 <Link to="/Login">
-                  {" "}
-                  <span className="signIn"> Sign In</span>
+                  <span className="signIn">Sign In</span>
                 </Link>
               </Typography>
             </form>
@@ -247,7 +246,10 @@ export default function Register() {
               7irafi
             </span>
           </div>
-          <Typography variant="small" className="mt-5 font-bold border-solid border-l-8 pl-4 text-end border-l-orange-500 uppercase">
+          <Typography
+            variant="paragraph"
+            className="mt-5 font-semibold border-solid border-l-8 pl-4 text-end border-l-orange-500 uppercase"
+          >
             where you can discover the world of traditional craftsmanship
           </Typography>
         </div>

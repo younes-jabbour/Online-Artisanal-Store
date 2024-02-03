@@ -121,6 +121,20 @@ function ListCoursesPage() {
     </div>
   );
 
+  const handleEnrollement = async (id) => {
+    if (!userInfo.IsConnected)
+      return window.alert("You must be logged in to enroll in a course");
+    try {
+      await axios
+        .post(`http://localhost:5000/enroll/newEnroll/${userId}`, { courseId : id })
+        .then((res) => {
+          window.location.reload();
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const Courses = (
     <div className="h-full w-full flex flex-wrap gap-[5rem] justify-center mt-5 mb-[10rem]">
       {noMatchingCourses ? (
@@ -187,6 +201,7 @@ function ListCoursesPage() {
                   variant="gradient"
                   className="capitalize hover:shadow-none flex gap-1 items-center hover:scale-105 transform transition-all duration-300 ease-in-out active:scale-100 "
                   size="sm"
+                  onClick={()=>handleEnrollement(course.id)}
                 >
                   Enroll now
                 </Button>

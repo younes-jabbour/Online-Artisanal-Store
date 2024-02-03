@@ -1,27 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import logo from "../../../../assets/logo.png";
 import "../../../../assets/style.css";
-import { useUserContext } from "../../../../context/UserContext";
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import {
   Card,
   Input,
   Button,
   Typography,
-  Radio,
-  // EyeIcon,
-  // EyeSlashIcon,
   Alert,
 } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
-import jwtDecode from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../../../redux/userSlice";
-
-function extarctInfo(token) {
-  return jwtDecode(token);
-}
 
 function Icon() {
   return (
@@ -66,8 +54,6 @@ function AlertCustomCloseIcon({ props }) {
 }
 
 function Login() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const openAlert = () => setOpen(true);
   const closeAlert = () => setOpen(false);
@@ -78,13 +64,7 @@ function Login() {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
-    // type: input,
   });
-  const [user, setUser] = useState({});
-  const from = location.state?.from?.pathname || "/";
-  const { userInfo, setUserInfo } = useUserContext();
-
-  const dispatch = useDispatch();
 
   const alertProps = {
     open: open,
@@ -111,26 +91,9 @@ function Login() {
     return Object.keys(newErrors).length === 0; // Return true if there are no errors
   };
 
-  // const handlEyeClick = () => {
-  //   setVisible(!visible);
-  // };
-
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
-  // const handleChange2 = (value) => {
-  //   setInputs((prev) => ({ ...prev, type: value }));
-  // };
-  // useEffect(() => {
-  //   if (success && user.id) {
-  //
-  // localStorage.setItem("userInfo", JSON.stringify(Userinfo));
-
-  //     console.log(Userinfo);
-  //     navigate("/test");
-  //   }
-  // }, [user.id, success]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -164,15 +127,6 @@ function Login() {
         console.log("Forbidden");
     }
   };
-
-  // useEffect(() => {
-  //   dispatch(
-  //     setUser({
-  //       AccessToken: localStorage.getItem("AccessToken"),
-  //       userInfo: userInfo,
-  //     })
-  //   );
-  // }, [userInfo]);
 
   return (
     <>
@@ -210,27 +164,21 @@ function Login() {
                     onChange={handleChange}
                     color="brown"
                     autoComplete="off"
-                    required
                   />
-                  {errors && <p>{errors.email}</p>}
+                  {errors.email && (
+                    <div className="error_message">{errors.email}</div>
+                  )}
                   <Input
-                    // type={visible ? "text" : "password"}
                     type="password"
                     size="lg"
-                    // icon={
-                    //   visible ? (
-                    //     <EyeSlashIcon onClick={handlEyeClick} />
-                    //   ) : (
-                    //     <EyeIcon onClick={handlEyeClick} />
-                    //   )
-                    // }
                     name="password"
                     label="Password"
                     onChange={handleChange}
                     color="brown"
-                    required
                   />
-                  {errors && <p>{errors.password}</p>}
+                  {errors.password && (
+                    <div className="error_message">{errors.password}</div>
+                  )}
                 </div>
 
                 {/* radio buttoms */}
@@ -272,10 +220,10 @@ function Login() {
                   color="gray"
                   className="mt-4 text-center font-normal"
                 >
-                  Already have an account?{" "}
-                  <span href="#" className="signIn">
-                    <Link to="/register"> Sign up</Link>
-                  </span>
+                  you don't have account yet?{" "}
+                  <Link to="/register">
+                    <span className="signIn">Sign up</span>
+                  </Link>
                 </Typography>
               </form>
             </Card>

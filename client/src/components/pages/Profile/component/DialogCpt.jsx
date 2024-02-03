@@ -33,7 +33,6 @@ function DialogCpt(props) {
     toolbar: toolbarOptions,
   };
 
-
   const { open, handleOpen, info } = props;
 
   const [categories, setCategories] = useState([]);
@@ -149,12 +148,15 @@ function DialogCpt(props) {
               onChange={(e) => setDesc(e.target.value)}
               name="desc"
             /> */}
-            <ReactQuill
-              modules={modules}
-              theme="snow"
-              value={desc}
-              onChange={setDesc}
-            />
+            {/* <div > */}
+              <ReactQuill
+                modules={modules}
+                theme="snow"
+                value={desc}
+                onChange={setDesc}
+                className="overflow-auto max-h-[9rem]"
+              />
+            {/* </div> */}
             {/* Product image */}
             <Input
               size="lg"

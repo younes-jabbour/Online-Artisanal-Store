@@ -21,7 +21,7 @@ import {
   TrashIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
-import { ShoppingCartIcon } from "@heroicons/react/24/solid";
+import { ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useSelector, useDispatch } from "react-redux";
 import { selectProduct } from "../../../redux/ProductSlice";
 import { addProduct } from "../../../redux/cartRedux";
@@ -67,6 +67,9 @@ function SingleProductPage() {
 
   // POST new comment
   const handleSubmit = async () => {
+    if (!userInfo.IsConnected)
+      return window.alert("you must be connected to comment !");
+
     try {
       await PublicApi.post(`/product/comment/${id}/${userInfo.id}`, {
         text: comment,
@@ -82,7 +85,7 @@ function SingleProductPage() {
   const deleteComment = async (Commentid) => {
     try {
       await PublicApi.delete(`/product/comment/delete/${Commentid}`).then(
-        (res) => {
+        () => {
           window.location.reload();
         }
       );
@@ -176,12 +179,16 @@ function SingleProductPage() {
                         shadow={false}
                         className="mx-0 flex items-center gap-4 pt-0 pb-8"
                       >
-                        <Avatar
-                          size="lg"
-                          variant="circular"
-                          src={singleComment.User.ImgUrl}
-                          alt="tania andrew"
-                        />
+                        {singleComment.User.ImgUrl ? (
+                          <Avatar
+                            size="lg"
+                            variant="circular"
+                            src={singleComment.User.ImgUrl}
+                            alt="tania andrew"
+                          />
+                        ) : (
+                          <UserCircleIcon className="h-10 w-10" />
+                        )}
                         <div className="flex w-full flex-col gap-0.5">
                           <div className="flex items-center justify-between">
                             <Typography variant="h5" color="blue-gray">
